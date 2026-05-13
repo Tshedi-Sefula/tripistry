@@ -10,7 +10,7 @@ Travellers browse and book packages; travel agencies create and manage them.
 
 | Name | Student Number | GitHub |
 |------|---------------|--------|
-| Member 1 | uXXXXXXXX | @github |
+| Member 1 | u05174776 | @Tshedi-Sefula |
 | Member 2 | uXXXXXXXX | @github |
 | Member 3 | uXXXXXXXX | @github |
 | Member 4 | uXXXXXXXX | @github |
