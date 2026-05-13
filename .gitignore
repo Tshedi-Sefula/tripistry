@@ -1,0 +1,28 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Environment & secrets (NEVER commit passwords or DB credentials)
+.env
+config.php
+db_config.php
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+error_log
+
+# Uploaded files (too large for git)
+uploads/
+
+# Database dumps (submit separately, not via git)
+*.sql.bak
