@@ -46,40 +46,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>My Agency Packages</title>
+    <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 25px;
-        }
-
-        .package-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 12px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 8px;
-        }
-
-        .delete {
-            background: #dc3545;
-        }
-
-        .back {
-            background: #555;
-        }
-    </style>
 </head>
 <body>
 

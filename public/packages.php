@@ -49,51 +49,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>Travel Packages - Tripistry</title>
+    <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-
-        .filters {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .package-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: green;
-        }
-
-        .view-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        select, button {
-            padding: 8px;
-            margin-right: 10px;
-        }
-    </style>
 </head>
 
 <body>

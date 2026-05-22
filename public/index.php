@@ -9,6 +9,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>Tripistry</title>
+    <link rel="stylesheet" href="../css/style.css">  " might remove as file didn't have a style section"
 </head>
 <body>
     <h1>Tripistry is running</h1>

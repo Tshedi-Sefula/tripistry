@@ -1,0 +1,191 @@
+/* --- TRIPISTRY COSMIC THEME --- */
+
+@font-face {
+    font-family: 'Blonde';
+    src: url('../images/Blonde.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Universe';
+    src: url('../images/Steven.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Crew';
+    src: url('../images/Crew.ttf') format('truetype');
+}
+
+:root {
+    --navy:       rgb(6, 21, 88);
+    --gold:       rgba(255, 200, 0, 0.9);
+    --gold-glow:  rgba(255, 200, 0, 0.4);
+    --glass:      rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --text-light: #e8eaf6;
+    --text-dim:   rgba(232, 234, 246, 0.65);
+    --danger:     #ff4d6d;
+    --font-display: 'Universe', fantasy;
+    --font-body:    'Crew', sans-serif;
+    
+    animation: theme-shift 114s linear infinite;
+}
+
+/* --- RESET & BASE --- */
+*, *::before, *::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text-light);
+    background: #020823;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- SHARED LAYOUT COMPONENTS --- */
+.container, .page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Background Elements */
+.bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    pointer-events: none;
+}
+
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    animation: overlay-shift 114s linear infinite;
+}
+
+/* --- GLASS CARDS --- */
+.glass-card, .card, .package-card, .login-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover, .package-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+}
+
+/* --- BUTTONS --- */
+.btn, .btn-search, button[type="submit"] {
+    display: inline-block;
+    background: var(--navy);
+    border: 1px solid var(--gold);
+    color: #fff;
+    font-family: var(--font-body);
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    filter: drop-shadow(0 0 8px var(--gold-glow));
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    filter: drop-shadow(0 0 15px var(--gold));
+    transform: scale(1.02);
+    background: var(--navy);
+}
+
+/* --- TITLES --- */
+h1, h2, .page-title, .logo-text {
+    font-family: var(--font-display);
+    color: #fff;
+    text-shadow: 0 0 20px var(--gold-glow);
+    font-weight: normal;
+}
+
+/* --- FORM ELEMENTS --- */
+input, select, textarea {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 11px 14px;
+    outline: none;
+    width: 100%;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+select option { background: #0a1540; }
+
+label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes overlay-shift {
+    0%   { background: rgba(10,  40,  80, 0.30); }
+    50%  { background: rgba(80,  30,   0, 0.28); }
+    100% { background: rgba(10,  40,  80, 0.30); }
+}
+
+@keyframes theme-shift {
+    0%   { --navy: rgb(60,110,160);  --gold: rgba(200,230,255,0.9); }
+    50%  { --navy: rgb(160,90, 40);  --gold: rgba(255,210,120,0.9); }
+    100% { --navy: rgb(60,110,160);  --gold: rgba(200,230,255,0.9); }
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-family: 'Blonde', sans-serif;
+    margin-left: 15px;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.navbar a:hover {
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold-glow);
+}

@@ -59,52 +59,8 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title><?php echo htmlspecialchars($package["title"]); ?></title>
+    <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-        }
-
-        .container {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 850px;
-            margin: auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .price {
-            color: green;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
-            margin-top: 10px;
-        }
-
-        .back {
-            background: #555;
-        }
-
-        .review-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-        }
-    </style>
 </head>
 
 <body>

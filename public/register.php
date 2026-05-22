@@ -85,47 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html>
 <head>
     <title>Register - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-        }
-
-        .container {
-            background: white;
-            max-width: 750px;
-            margin: auto;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            margin-bottom: 15px;
-        }
-
-        textarea {
-            height: 100px;
-        }
-
-        button, .btn {
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            border: none;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .section {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/style.css">
 
     <script>
         function toggleRoleFields() {

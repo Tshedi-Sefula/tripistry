@@ -96,42 +96,8 @@ $stmt->execute([
 <html>
 <head>
     <title>Leave Review - Tripistry</title>
+    <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-        }
-
-        .container {
-            background: white;
-            max-width: 700px;
-            margin: auto;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        textarea {
-            width: 100%;
-            height: 120px;
-        }
-
-        input, textarea {
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 15px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body>
 

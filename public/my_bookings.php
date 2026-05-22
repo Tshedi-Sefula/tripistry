@@ -51,26 +51,8 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>My Bookings - Tripistry</title>
+    <link rel="stylesheet" href="../css/style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-
-        .booking-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .status {
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
 
