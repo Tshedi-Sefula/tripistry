@@ -24,12 +24,10 @@
    36–38s  Dark cave outro          → deep purple, near-black
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── GOOGLE FONTS ─────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap');
 
 /* ── KEEP ORIGINAL CUSTOM FONTS AS FALLBACK ───────────────────── */
 @font-face { font-family:'Blonde';   src:url('../img/Blonde.otf') format('opentype'); }
-@font-face { font-family:'Universe'; src:url('../img/Steven.ttf') format('truetype'); }
+@font-face { font-family:'Adventure'; src:url('../img/adventuretime.ttf') format('truetype'); }
 @font-face { font-family:'Crew';     src:url('../img/Crew.ttf')   format('truetype'); }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -50,8 +48,9 @@
     --danger:       #ff4455;
     --success:      #44eeaa;
 
-    --font-display: 'Fredoka One', 'Universe', cursive;
-    --font-body:    'Patrick Hand', 'Crew', cursive;
+    --font-display: 'Adventure', cursive;
+    --font-body:    'Crew', cursive;
+    --font-nav:     'Blonde', sans-serif;
 
     animation: at-theme 39s linear infinite;
 }
@@ -178,6 +177,20 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   VIDEO BACKGROUND STYLING
+   ═══════════════════════════════════════════════════════════════ */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the video fills the screen without stretching */
+    z-index: -1;       /* Places the video behind all other content */
+    pointer-events: none; /* Prevents the video from blocking mouse clicks */
+}
+
+/* ═══════════════════════════════════════════════════════════════
    OVERLAY  — darkens / tints the video to match each scene
    ═══════════════════════════════════════════════════════════════ */
 @keyframes at-overlay {
@@ -290,7 +303,7 @@ body {
 .navbar ul li a {
     text-decoration: none;
     color: var(--text-light);
-    font-family: var(--font-display);
+    font-family: 'Blonde' sans-serif !important;
     font-size: 16px;
     padding: 9px 20px;
     border-radius: 100px;
@@ -304,7 +317,7 @@ body {
 .navbar ul li a:hover {
     background: var(--at-primary);
     border-color: var(--at-outline);
-    color: var(--at-dark);
+    color: var(--at-dark) !important;
     box-shadow: 3px 3px 0 var(--at-outline);
     transform: translateY(-2px) translateX(-1px);
 }
