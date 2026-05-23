@@ -7,6 +7,11 @@ $userRole = $_SESSION["role"] ?? "";
 $userEmail = $_SESSION["email"] ?? "Guest";
 ?>
 
+<video autoplay muted loop playsinline class="video-background">
+    <source src="../AdventureTime.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 <style>
 
 body {
