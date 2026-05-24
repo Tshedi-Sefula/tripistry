@@ -12,7 +12,7 @@ if (!isAgency()) {
 <html>
 <head>
     <title>Agency Dashboard - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     
 
 </head>

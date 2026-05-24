@@ -59,7 +59,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title><?php echo htmlspecialchars($package["title"]); ?></title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
 </head>
 

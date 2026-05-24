@@ -12,7 +12,7 @@ if (!isTraveller()) {
 <html>
 <head>
     <title>Traveller Dashboard - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     
 </head>
 

@@ -96,7 +96,7 @@ $stmt->execute([
 <html>
 <head>
     <title>Leave Review - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
 </head>
 <body>

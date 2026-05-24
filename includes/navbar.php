@@ -1,42 +1,36 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-$userRole = $_SESSION["role"] ?? "";
+// navbar.php — included by every page
+// auth.php must be required BEFORE this file
+$userRole  = $_SESSION["role"]  ?? "";
 $userEmail = $_SESSION["email"] ?? "Guest";
 ?>
 
-<video autoplay muted loop playsinline class="video-background">
-    <source src="../AdventureTime.mp4" type="video/mp4">
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="../public/img/AdventureTime.mp4" type="video/mp4">
 </video>
+<div class="bg-overlay"></div>
 
-<a href="index.php">
-    <img src="../img/logo.2.png" alt="Tripistry Logo" class="logo">
-</a>
+<nav class="navbar">
+    <a href="index.php">
+        <img src="/img/logo2.png" alt="Tripistry" class="logo">
+    </a>
 
-<div class="navbar">
-    <div class="nav-left">
-        <ul>
-            <?php if ($userRole === "traveller"): ?>
-                <li><a href="traveller_dashboard.php">Dashboard</a></li>
-                <li><a href="packages.php">Packages</a></li>
-                <li><a href="my_bookings.php">My Bookings</a></li>
-            <?php elseif ($userRole === "agency"): ?>
-                <li><a href="agency_dashboard.php">Dashboard</a></li>
-                <li><a href="agency_packages.php">My Packages</a></li>
-                <li><a href="create_package.php">Create</a></li>
-            <?php endif; ?>
-        </ul>
-    </div>
+    <ul>
+        <?php if ($userRole === "traveller"): ?>
+            <li><a href="traveller_dashboard.php">Dashboard</a></li>
+            <li><a href="packages.php">Packages</a></li>
+            <li><a href="my_bookings.php">My Bookings</a></li>
+        <?php elseif ($userRole === "agency"): ?>
+            <li><a href="agency_dashboard.php">Dashboard</a></li>
+            <li><a href="agency_packages.php">My Packages</a></li>
+            <li><a href="create_package.php">+ Create</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+            <li><a href="register.php">Register</a></li>
+        <?php endif; ?>
 
-    <div class="nav-right">
-        <ul>
-            <li>
-                <span class="user-info" style="color: white; font-family: 'Blonde'; letter-spacing: 2px; margin-right: 15px; text-transform: uppercase; font-size: 12px;">
-                    Logged in: <?php echo htmlspecialchars($userEmail); ?>
-                </span>
-            </li>
-            <li><a href="logout.php" class="logout-btn">Logout</a></li>
-        </ul>
-    </div>
-</div>
+        <?php if ($userRole !== ""): ?>
+            <li><a href="logout.php">Logout</a></li>
+        <?php endif; ?>
+    </ul>
+</nav>

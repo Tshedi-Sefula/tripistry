@@ -49,7 +49,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>Travel Packages - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
 </head>
 

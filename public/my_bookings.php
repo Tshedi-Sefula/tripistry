@@ -51,7 +51,7 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>My Bookings - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
 </head>
 <body>
