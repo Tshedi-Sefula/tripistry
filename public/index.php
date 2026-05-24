@@ -3,16 +3,17 @@ require_once "../includes/db.php";
 require_once "../includes/auth.php";
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-ZA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tripistry</title>
+    <title>Tripistry — Your Adventure Awaits</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
 <video autoplay muted loop playsinline class="bg-video">
-    <source src="/img/AdventureTime.mp4" type="video/mp4">
+    <source src="img/StevenUniverseBarn.mp4" type="video/mp4">
 </video>
 <div class="bg-overlay"></div>
 
@@ -33,5 +34,6 @@ require_once "../includes/auth.php";
         </div>
     </div>
 </div>
+
 </body>
 </html>

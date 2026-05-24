@@ -31,8 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $userID = $pdo->lastInsertId();
 
             if ($role === "traveller") {
-                $firstName   = trim($_POST["firstName"] ?? "");
-                $lastName    = trim($_POST["lastName"]  ?? "");
+                $firstName   = trim($_POST["firstName"]   ?? "");
+                $lastName    = trim($_POST["lastName"]    ?? "");
                 $passportNum = trim($_POST["passportNum"] ?? "");
                 $nationality = trim($_POST["nationality"] ?? "");
                 $DOB         = $_POST["DOB"] ?? null;
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-ZA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,12 +79,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </script>
 </head>
 <body>
+
 <video autoplay muted loop playsinline class="bg-video">
-    <source src="/img/AdventureTime.mp4" type="video/mp4">
+    <source src="img/StevenUniverseBarn.mp4" type="video/mp4">
 </video>
 <div class="bg-overlay"></div>
 
-<div class="wrapper">
+<div class="wrapper auth-center">
     <div class="auth-card" style="max-width:520px;">
         <h2>Create Account</h2>
         <p>Join the Tripistry adventure!</p>
@@ -93,18 +94,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" class="auth-form">
+
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" required placeholder="your@email.com">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="your@email.com">
             </div>
+
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required placeholder="Min 8 characters">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Min 8 characters">
             </div>
+
             <div class="form-group">
-                <label>I am a...</label>
-                <select name="role" id="role" onchange="toggleRoleFields()" required>
+                <label for="role">I am a…</label>
+                <select id="role" name="role" onchange="toggleRoleFields()" required>
                     <option value="traveller">Traveller</option>
                     <option value="agency">Travel Agency</option>
                 </select>
@@ -114,11 +118,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div id="travellerFields">
                 <div class="form-group">
                     <label>First Name</label>
-                    <input type="text" name="firstName" placeholder="Finn">
+                    <input type="text" name="firstName" placeholder="e.g. Finn">
                 </div>
                 <div class="form-group">
                     <label>Last Name</label>
-                    <input type="text" name="lastName" placeholder="The Human">
+                    <input type="text" name="lastName" placeholder="e.g. The Human">
                 </div>
                 <div class="form-group">
                     <label>Passport Number</label>
@@ -138,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div id="agencyFields" style="display:none;">
                 <div class="form-group">
                     <label>Agency Name</label>
-                    <input type="text" name="agencyName" placeholder="Ooo Travel Co.">
+                    <input type="text" name="agencyName" placeholder="e.g. Ooo Travel Co.">
                 </div>
                 <div class="form-group">
                     <label>Phone</label>
@@ -154,17 +158,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea name="agencyDescription" rows="3" placeholder="Tell travellers about your agency..."></textarea>
+                    <textarea name="agencyDescription" rows="3" placeholder="Tell travellers about your agency…"></textarea>
                 </div>
             </div>
 
-            <button type="submit" class="btn-search" style="width:100%; margin-top:1rem;">Register</button>
+            <button type="submit" class="btn-search">Register</button>
         </form>
 
         <p style="margin-top:1rem; text-align:center; font-size:14px; color:var(--text-dim);">
-            Already have an account? <a href="login.php" style="color:var(--at-primary);">Login</a>
+            Already have an account? <a href="login.php" style="color:var(--gold); text-decoration:none;">Login</a>
         </p>
     </div>
 </div>
+
 </body>
 </html>

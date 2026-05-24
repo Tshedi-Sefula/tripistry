@@ -10,29 +10,26 @@ if (!isAgency()) {
 
 $userID = $_SESSION["user_id"];
 
-$stmt = $pdo->prepare("
-    SELECT agencyID
-    FROM travelAgency
-    WHERE userID = ?
-");
+$stmt = $pdo->prepare("SELECT agencyID FROM travelAgency WHERE userID = ?");
 $stmt->execute([$userID]);
 $agency = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$agency) {
     die("Agency profile not found.");
 }
-
 $agencyID = $agency["agencyID"];
+
 $message = "";
+$msgType = "error";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $title = trim($_POST["title"]);
+    $title       = trim($_POST["title"]);
     $description = trim($_POST["description"]);
-    $basePrice = floatval($_POST["basePrice"]);
+    $basePrice   = floatval($_POST["basePrice"]);
     $durationDays = intval($_POST["durationDays"]);
-    $startDate = $_POST["startDate"];
-    $endDate = $_POST["endDate"];
-    $itinerary = trim($_POST["itinerary"]);
+    $startDate   = $_POST["startDate"];
+    $endDate     = $_POST["endDate"];
+    $itinerary   = trim($_POST["itinerary"]);
     $packageType = $_POST["packageType"];
 
     if ($title === "" || $basePrice <= 0 || $durationDays <= 0) {
@@ -40,95 +37,92 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         $stmt = $pdo->prepare("
             INSERT INTO travelPackage
-            (
-                agencyID,
-                title,
-                description,
-                basePrice,
-                durationDays,
-                startDate,
-                endDate,
-                itinerary,
-                status,
-                packageType
-            )
+                (agencyID, title, description, basePrice, durationDays, startDate, endDate, itinerary, status, packageType)
             VALUES
-            (
-                ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?
-            )
+                (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
         ");
-
-        $stmt->execute([
-            $agencyID,
-            $title,
-            $description,
-            $basePrice,
-            $durationDays,
-            $startDate,
-            $endDate,
-            $itinerary,
-            $packageType
-        ]);
-
-        $message = "Package created successfully.";
+        $stmt->execute([$agencyID, $title, $description, $basePrice, $durationDays, $startDate, $endDate, $itinerary, $packageType]);
+        $message = "Package created successfully!";
+        $msgType = "success";
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Create Package - Tripistry</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Package — Tripistry</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
+<div class="wrapper">
+    <div class="page-content">
+        <a class="btn-back" href="agency_packages.php">Back to My Packages</a>
 
-    <h1>Create Travel Package</h1>
+        <h1 class="page-title">Create Package</h1>
+        <p class="page-subtitle">DESIGN A NEW TRAVEL EXPERIENCE</p>
 
-    <?php if ($message): ?>
-        <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
-    <?php endif; ?>
+        <div class="glass-card" style="max-width:680px;">
 
-    <form method="POST">
+            <?php if ($message): ?>
+                <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
+            <?php endif; ?>
 
-        <label>Title</label>
-        <input type="text" name="title" required>
+            <form method="POST" class="book-form">
 
-        <label>Description</label>
-        <textarea name="description" required></textarea>
+                <div class="form-group">
+                    <label for="title">Package Title <span style="color:var(--danger);">*</span></label>
+                    <input type="text" id="title" name="title" required placeholder="e.g. Zanzibar Escape">
+                </div>
 
-        <label>Base Price</label>
-        <input type="number" name="basePrice" step="0.01" min="1" required>
+                <div class="form-group">
+                    <label for="packageType">Package Type</label>
+                    <select id="packageType" name="packageType" required>
+                        <option value="regular">Regular</option>
+                        <option value="group">Group</option>
+                    </select>
+                </div>
 
-        <label>Duration Days</label>
-        <input type="number" name="durationDays" min="1" required>
+                <div class="form-group">
+                    <label for="basePrice">Base Price (R) <span style="color:var(--danger);">*</span></label>
+                    <input type="number" id="basePrice" name="basePrice" step="0.01" min="1" required placeholder="e.g. 12500">
+                </div>
 
-        <label>Start Date</label>
-        <input type="date" name="startDate" required>
+                <div class="form-group">
+                    <label for="durationDays">Duration (days) <span style="color:var(--danger);">*</span></label>
+                    <input type="number" id="durationDays" name="durationDays" min="1" required placeholder="e.g. 7">
+                </div>
 
-        <label>End Date</label>
-        <input type="date" name="endDate" required>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                </div>
 
-        <label>Itinerary</label>
-        <textarea name="itinerary" required></textarea>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" required>
+                </div>
 
-        <label>Package Type</label>
-        <select name="packageType" required>
-            <option value="regular">Regular</option>
-            <option value="group">Group</option>
-        </select>
+                <div class="form-group" style="grid-column:1 / -1;">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" required
+                        placeholder="A brief overview of what this package offers…"></textarea>
+                </div>
 
-        <button type="submit">Create Package</button>
+                <div class="form-group" style="grid-column:1 / -1;">
+                    <label for="itinerary">Itinerary</label>
+                    <textarea id="itinerary" name="itinerary" rows="5" required
+                        placeholder="Day 1: Arrival…&#10;Day 2: City tour…"></textarea>
+                </div>
 
-        <a class="btn back" href="agency_packages.php">Back</a>
-
-    </form>
-
+                <button type="submit" class="btn-search">Create Package</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 </body>

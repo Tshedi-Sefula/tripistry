@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-ZA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,36 +38,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
 <video autoplay muted loop playsinline class="bg-video">
-    <source src="/img/AdventureTime.mp4" type="video/mp4">
+    <source src="img/StevenUniverseBarn.mp4" type="video/mp4">
 </video>
 <div class="bg-overlay"></div>
 
-<div class="wrapper">
+<div class="wrapper auth-center">
     <div class="auth-card">
-        <h2>Welcome Back!</h2>
+        <h2>Welcome Back</h2>
         <p>Login to your Tripistry account</p>
 
         <?php if ($error): ?>
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" class="auth-form">
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" required placeholder="your@email.com">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="your@email.com">
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required placeholder="••••••••">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn-search" style="grid-column:1;">Login</button>
+            <button type="submit" class="btn-search">Login</button>
         </form>
 
         <p style="margin-top:1.2rem; text-align:center; font-size:14px; color:var(--text-dim);">
-            No account? <a href="register.php" style="color:var(--at-primary);">Register here</a>
+            No account? <a href="register.php" style="color:var(--gold); text-decoration:none;">Register here</a>
         </p>
     </div>
 </div>
+
 </body>
 </html>

@@ -13,7 +13,7 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 }
 
 $packageID = $_GET["id"];
-$userID = $_SESSION["user_id"];
+$userID    = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("SELECT travellerID FROM traveller WHERE userID = ?");
 $stmt->execute([$userID]);
@@ -22,14 +22,9 @@ $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$traveller) {
     die("Traveller profile not found.");
 }
-
 $travellerID = $traveller["travellerID"];
 
-$stmt = $pdo->prepare("
-    SELECT packageID, title, totalPrice
-    FROM travelPackage
-    WHERE packageID = ? AND status = 'active'
-");
+$stmt = $pdo->prepare("SELECT packageID, title, totalPrice FROM travelPackage WHERE packageID = ? AND status = 'active'");
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,6 +33,7 @@ if (!$package) {
 }
 
 $message = "";
+$success = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $numTravellers = intval($_POST["numTravellers"]);
@@ -48,52 +44,66 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $totalAmount = $package["totalPrice"] * $numTravellers;
 
         $stmt = $pdo->prepare("
-            INSERT INTO booking 
-            (travellerID, packageID, numTravellers, totalAmount, status, paymentStatus)
+            INSERT INTO booking (travellerID, packageID, numTravellers, totalAmount, status, paymentStatus)
             VALUES (?, ?, ?, ?, 'pending', 'unpaid')
         ");
-
-        $stmt->execute([
-            $travellerID,
-            $packageID,
-            $numTravellers,
-            $totalAmount
-        ]);
-
-        $message = "Booking created successfully.";
+        $stmt->execute([$travellerID, $packageID, $numTravellers, $totalAmount]);
+        $message = "Booking created successfully! Total: R" . number_format($totalAmount, 2);
+        $success = true;
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Book Package - Tripistry</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Package — Tripistry</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    
+
 <?php include "../includes/navbar.php"; ?>
 
-<h1>Book Package</h1>
+<div class="wrapper">
+    <div class="page-content">
+        <a class="btn-back" href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
 
-<h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+        <h1 class="page-title">Book Package</h1>
+        <p class="page-subtitle">CONFIRM YOUR TRAVEL BOOKING</p>
 
-<p>Price per traveller: R<?php echo number_format($package["totalPrice"], 2); ?></p>
+        <div class="glass-card" style="max-width:540px;">
+            <div class="view-manufacturer">Package</div>
+            <div class="view-model" style="font-size:1.6rem; margin-bottom:.4rem;">
+                <?php echo htmlspecialchars($package["title"]); ?>
+            </div>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:1.2rem;">
+                Price per traveller: <strong style="color:var(--gold);">R<?php echo number_format($package["totalPrice"], 2); ?></strong>
+            </p>
 
-<?php if ($message): ?>
-    <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
-<?php endif; ?>
+            <?php if ($message): ?>
+                <div class="<?php echo $success ? 'confirm-msg' : 'alert alert-error'; ?>">
+                    <?php echo htmlspecialchars($message); ?>
+                </div>
+            <?php endif; ?>
 
-<form method="POST">
-    <label>Number of Travellers</label><br>
-    <input type="number" name="numTravellers" min="1" value="1" required><br><br>
-
-    <button type="submit">Confirm Booking</button>
-</form>
-
-<br>
-
-<a href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
+            <?php if (!$success): ?>
+                <form method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="numTravellers">Number of Travellers</label>
+                        <input type="number" id="numTravellers" name="numTravellers" min="1" value="1" required>
+                    </div>
+                    <button type="submit" class="btn-search">Confirm Booking</button>
+                </form>
+            <?php else: ?>
+                <div class="btn-row">
+                    <a class="btn" href="my_bookings.php">View My Bookings</a>
+                    <a class="btn-secondary" href="packages.php">Browse More</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
