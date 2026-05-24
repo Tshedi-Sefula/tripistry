@@ -290,6 +290,7 @@ input, select, textarea, button,
     padding: 2rem;
     backdrop-filter: blur(14px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+
 }
 
 /* ─── BOOK FLIGHTS FORM ──────────────────────────── */
@@ -1208,6 +1209,9 @@ input, select, textarea, button,
 .booking-route .airport-code {
     font-family: var(--font-display);
 }
+.glass-card h2 {
+    font-family: var(--font-display);
+}
 /* ══════════════════════════════════════════════════
    TRIPISTRY EXTENSIONS — layered on top of Booking Universe base
    ══════════════════════════════════════════════════ */
@@ -1269,6 +1273,12 @@ input, select, textarea, button,
     background: rgba(77,216,160,0.12);
     border-color: rgba(77,216,160,0.4);
     color: var(--success);
+}
+
+.alert-info {
+    background: rgba(0, 123, 255, 0.12);
+    border-color: rgba(0, 123, 255, 0.4);
+    color: #80bfff;
 }
 
 /* ─── FORM EXTRAS (textarea, full-width inputs) ───── */
