@@ -5,7 +5,25 @@ require_once "../includes/auth.php";
 requireLogin();
 if (!isAgency()) { die("Access denied."); }
 
-$userID  = $_SESSION["user_id"];
+if (!isAgency()) {
+    die("Access denied.");
+}
+
+$userID = $_SESSION["user_id"];
+
+$stmt = $pdo->prepare("
+    SELECT agencyID
+    FROM TravelAgency
+    WHERE userID = ?
+");
+$stmt->execute([$userID]);
+$agency = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$agency) {
+    die("Agency profile not found.");
+}
+
+$agencyID = $agency["agencyID"];
 $message = "";
 $msgType = "error";
 
@@ -24,8 +42,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         $stmt = $pdo->prepare("
             INSERT INTO TravelPackage
-                (agencyUserID, title, description, basePrice, durationDays, startDate, endDate, itinerary, status, packageType)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
+            (
+                agencyID,
+                title,
+                description,
+                basePrice,
+                durationDays,
+                startDate,
+                endDate,
+                itinerary,
+                status,
+                packageType
+            )
+            VALUES
+            (
+                ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?
+            )
         ");
         $stmt->execute([$userID, $title, $description, $basePrice, $durationDays, $startDate, $endDate, $itinerary, $packageType]);
 

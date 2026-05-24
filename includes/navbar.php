@@ -20,6 +20,9 @@ $currentPage = basename($_SERVER["PHP_SELF"]);
             <li><a href="traveller_dashboard.php" <?php if ($currentPage==='traveller_dashboard.php') echo 'class="active"'; ?>>Dashboard</a></li>
             <li><a href="packages.php"            <?php if ($currentPage==='packages.php')            echo 'class="active"'; ?>>Packages</a></li>
             <li><a href="my_bookings.php"         <?php if ($currentPage==='my_bookings.php')         echo 'class="active"'; ?>>My Bookings</a></li>
+            <li><a href="recommendations.php"         <?php if ($currentPage==='recommendations.php')         echo 'class="active"'; ?>>Recommendations</a></li>
+
+            
         <?php elseif ($userRole === "agency"): ?>
             <li><a href="agency_dashboard.php"  <?php if ($currentPage==='agency_dashboard.php')  echo 'class="active"'; ?>>Dashboard</a></li>
             <li><a href="agency_packages.php"   <?php if ($currentPage==='agency_packages.php')   echo 'class="active"'; ?>>My Packages</a></li>

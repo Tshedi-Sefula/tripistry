@@ -8,9 +8,30 @@ if (!isAgency()) { die("Access denied."); }
 $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
-    SELECT packageID, title, description, basePrice, durationDays, status, packageType
+    SELECT agencyID
+    FROM TravelAgency
+    WHERE userID = ?
+");
+$stmt->execute([$userID]);
+$agency = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$agency) {
+    die("Agency profile not found.");
+}
+
+$agencyID = $agency["agencyID"];
+
+$stmt = $pdo->prepare("
+    SELECT
+        packageID,
+        title,
+        description,
+        totalPrice,
+        durationDays,
+        status,
+        packageType
     FROM TravelPackage
-    WHERE agencyUserID = ?
+    WHERE agencyID = ?
     ORDER BY dateCreated DESC
 ");
 $stmt->execute([$userID]);

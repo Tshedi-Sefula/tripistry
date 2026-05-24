@@ -13,7 +13,52 @@ $stmt = $pdo->prepare("SELECT packageID FROM TravelPackage WHERE packageID=? AND
 $stmt->execute([$packageID, $userID]);
 if (!$stmt->fetch()) { die("Package not found or access denied."); }
 
-$pdo->prepare("DELETE FROM TravelPackage WHERE packageID=? AND agencyUserID=?")->execute([$packageID,$userID]);
+$packageID = $_GET["id"];
+$userID = $_SESSION["user_id"];
+
+
+
+$stmt = $pdo->prepare("
+    SELECT agencyID
+    FROM TravelAgency
+    WHERE userID = ?
+");
+
+$stmt->execute([$userID]);
+
+$agency = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$agency) {
+    die("Agency profile not found.");
+}
+
+$agencyID = $agency["agencyID"];
+
+
+
+$stmt = $pdo->prepare("
+    SELECT packageID
+    FROM TravelPackage
+    WHERE packageID = ?
+      AND agencyID = ?
+");
+
+$stmt->execute([$packageID, $agencyID]);
+
+$package = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$package) {
+    die("Package not found or access denied.");
+}
+
+
+$stmt = $pdo->prepare("
+    DELETE FROM TravelPackage
+    WHERE packageID = ?
+      AND agencyID = ?
+");
+
+$stmt->execute([$packageID, $agencyID]);
 
 header("Location: agency_packages.php");
 exit;

@@ -1,6 +1,9 @@
 <?php
 require_once "../includes/db.php";
 require_once "../includes/auth.php";
+
+$stmt = $pdo->query("SELECT COUNT(*) AS total FROM TravelPackage");
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en-ZA">

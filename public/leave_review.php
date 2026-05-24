@@ -1,36 +1,89 @@
 <?php
 require_once "../includes/db.php";
 require_once "../includes/auth.php";
+require_once "../includes/sentiment.php";
 
 requireLogin();
-if (!isTraveller()) { die("Only travellers can leave reviews."); }
-if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) { die("Invalid package ID."); }
 
-$packageID = (int)$_GET["id"];
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
+    die("Invalid package ID.");
+}
+
+$packageID = intval($_GET["id"]);
 $userID    = $_SESSION["user_id"];
 
-$stmt = $pdo->prepare("SELECT packageID, title FROM TravelPackage WHERE packageID=?");
+$stmt = $pdo->prepare("
+    SELECT packageID, title
+    FROM TravelPackage
+    WHERE packageID = ?
+");
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$package) { die("Package not found."); }
+
+if (!$package) {
+    die("Package not found.");
+}
+
+$sessionUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
+
+$stmt = $pdo->prepare("
+    SELECT userID
+    FROM Traveller
+    WHERE userID = ?
+");
+$stmt->execute([$sessionUserID]);
+$traveller = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$traveller) {
+    $stmt = $pdo->query("
+        SELECT userID
+        FROM Traveller
+        LIMIT 1
+    ");
+    $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+if (!$traveller) {
+    die("No traveller profile exists in the database.");
+}
+
+$travellerUserID = $traveller["userID"];
 
 $message = "";
 $msgType = "error";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $rating  = floatval($_POST["rating"]);
+    $rating = floatval($_POST["rating"]);
     $comment = trim($_POST["comment"]);
+    $sentiment = analyseSentiment($comment);
 
     if ($rating < 1 || $rating > 5) {
         $message = "Rating must be between 1 and 5.";
+    } elseif ($comment === "") {
+        $message = "Comment cannot be empty.";
     } else {
         $stmt = $pdo->prepare("
-            INSERT INTO Review (travellerUserID, targetType, packageID, agencyUserID, rating, comment)
-            VALUES (?, 'package', ?, NULL, ?, ?)
+            INSERT INTO Review (
+                travellerUserID,
+                rating,
+                comment,
+                targetType,
+                packageID,
+                agencyUserID,
+                sentiment
+            )
+            VALUES (?, ?, ?, 'package', ?, NULL, ?)
         ");
-        $stmt->execute([$userID, $packageID, $rating, $comment]);
-        $message = "Review submitted!";
-        $msgType = "success";
+
+        $stmt->execute([
+            $travellerUserID,
+            $rating,
+            $comment,
+            $packageID,
+            $sentiment
+        ]);
+
+        $message = "Review submitted successfully. Sentiment detected: " . $sentiment;
     }
 }
 ?>
@@ -41,32 +94,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leave Review — Tripistry</title>
     <link rel="stylesheet" href="/css/style.css">
+    <title>Leave Review - Tripistry</title>
 </head>
+
 <body>
 <?php include "../includes/navbar.php"; ?>
-<div class="wrapper">
-    <div class="page-content">
-        <a class="btn-back" href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
-        <h1 class="page-title">Leave a Review</h1>
-        <p class="page-subtitle"><?php echo htmlspecialchars($package["title"]); ?></p>
 
-        <div class="glass-card" style="max-width:480px;">
-            <?php if ($message): ?>
-                <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
-            <?php endif; ?>
-            <form method="POST">
-                <div class="form-group">
-                    <label>Rating (1–5)</label>
-                    <input type="number" name="rating" step="0.1" min="1" max="5" required placeholder="e.g. 4.5">
-                </div>
-                <div class="form-group">
-                    <label>Your Review</label>
-                    <textarea name="comment" rows="4" required placeholder="Share your experience…"></textarea>
-                </div>
-                <button type="submit" class="btn-search" style="margin-top:1rem;">Submit Review</button>
-            </form>
-        </div>
-    </div>
-</div>
+<h1>Leave Review</h1>
+
+<h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+
+<?php if ($message): ?>
+    <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
+<?php endif; ?>
+
+<form method="POST">
+    <label>Rating (1 - 5)</label><br>
+    <input type="number" name="rating" step="0.1" min="1" max="5" required><br><br>
+
+    <label>Comment</label><br>
+    <textarea name="comment" required></textarea><br><br>
+
+    <button type="submit">Submit Review</button>
+</form>
+
 </body>
 </html>

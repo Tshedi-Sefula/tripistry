@@ -9,8 +9,34 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) { die("Invalid package ID."
 $packageID = (int)$_GET["id"];
 $userID    = $_SESSION["user_id"];
 
-$stmt = $pdo->prepare("SELECT * FROM TravelPackage WHERE packageID = ? AND agencyUserID = ?");
-$stmt->execute([$packageID, $userID]);
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
+    die("Invalid package ID.");
+}
+
+$packageID = $_GET["id"];
+$userID = $_SESSION["user_id"];
+
+$stmt = $pdo->prepare("
+    SELECT agencyID
+    FROM TravelAgency
+    WHERE userID = ?
+");
+$stmt->execute([$userID]);
+$agency = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$agency) {
+    die("Agency profile not found.");
+}
+
+$agencyID = $agency["agencyID"];
+
+$stmt = $pdo->prepare("
+    SELECT *
+    FROM TravelPackage
+    WHERE packageID = ?
+      AND agencyID = ?
+");
+$stmt->execute([$packageID, $agencyID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$package) { die("Package not found or access denied."); }
 
@@ -33,9 +59,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         $stmt = $pdo->prepare("
             UPDATE TravelPackage
-            SET title=?, description=?, basePrice=?, durationDays=?,
-                startDate=?, endDate=?, itinerary=?, status=?, packageType=?
-            WHERE packageID=? AND agencyUserID=?
+            SET
+                title = ?,
+                description = ?,
+                basePrice = ?,
+                durationDays = ?,
+                startDate = ?,
+                endDate = ?,
+                itinerary = ?,
+                status = ?,
+                packageType = ?
+            WHERE packageID = ?
+              AND agencyID = ?
         ");
         $stmt->execute([$title,$description,$basePrice,$durationDays,
                         $startDate,$endDate,$itinerary,$status,$packageType,
@@ -43,8 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Package updated successfully.";
         $msgType = "success";
 
-        $stmt = $pdo->prepare("SELECT * FROM TravelPackage WHERE packageID=? AND agencyUserID=?");
-        $stmt->execute([$packageID,$userID]);
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM TravelPackage
+            WHERE packageID = ?
+              AND agencyID = ?
+        ");
+        $stmt->execute([$packageID, $agencyID]);
         $package = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
