@@ -13,7 +13,7 @@ Travellers browse and book packages; travel agencies create and manage them.
 | Member 1 | u05174776 | @Tshedi-Sefula |
 | Member 2 | u25588304 | @mohammedlutch74 |
 | Member 3 | u24596397 | @yasar-rahman |
-| Member 4 | uXXXXXXXX | @github |
+| Member 4 | u24983439 | @mueezgani |
 | Member 5 | uXXXXXXXX | @github |
 
 ---
