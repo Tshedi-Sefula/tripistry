@@ -4,33 +4,32 @@ require_once "../includes/auth.php";
 
 requireLogin();
 
-if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
-    die("Invalid package ID.");
-}
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) { die("Invalid package ID."); }
 
-$packageID = $_GET["id"];
+$packageID = (int)$_GET["id"];
 
 $stmt = $pdo->prepare("
     SELECT
-        p.packageID, p.title, p.description, p.totalPrice, p.durationDays,
+        p.packageID, p.title, p.description, p.basePrice, p.durationDays,
         p.startDate, p.endDate, p.itinerary, p.packageType,
-        a.name AS agencyName, a.phone AS agencyPhone,
+        a.name AS agencyName, a.userID AS agencyUserID,
+        u.phone AS agencyPhone,
         a.website AS agencyWebsite, a.address AS agencyAddress, a.rating AS agencyRating
-    FROM travelPackage p
-    JOIN travelAgency a ON p.agencyID = a.agencyID
+    FROM TravelPackage p
+    JOIN TravelAgency a ON p.agencyUserID = a.userID
+    JOIN User u ON a.userID = u.userID
     WHERE p.packageID = ?
 ");
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$package) {
-    die("Package not found.");
-}
+if (!$package) { die("Package not found."); }
 
 $reviewStmt = $pdo->prepare("
-    SELECT r.rating, r.comment, r.reviewDate, t.name AS travellerName
-    FROM review r
-    JOIN traveller t ON r.travellerID = t.travellerID
+    SELECT r.rating, r.comment, r.reviewDate,
+           CONCAT(t.firstName, ' ', t.lastName) AS travellerName
+    FROM Review r
+    JOIN Traveller t ON r.travellerUserID = t.userID
     WHERE r.packageID = ? AND r.targetType = 'package'
     ORDER BY r.reviewDate DESC
 ");
@@ -46,23 +45,24 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
 <?php include "../includes/navbar.php"; ?>
-
 <div class="wrapper">
     <div class="page-content">
         <a class="btn-back" href="packages.php">Back to Packages</a>
 
-        <div class="detail-layout">
+        <div class="view-layout">
+            <div class="view-image-wrap">
+                <span class="plane-emoji-large">✈️</span>
+            </div>
 
-            <!-- Main info -->
             <div>
-                <div class="view-manufacturer"><?php echo ucfirst($package["packageType"]); ?> Package</div>
+                <div class="view-manufacturer"><?php echo ucfirst($package["packageType"]); ?> Package · <?php echo htmlspecialchars($package["agencyName"]); ?></div>
                 <h1 class="view-model"><?php echo htmlspecialchars($package["title"]); ?></h1>
                 <p class="view-description"><?php echo htmlspecialchars($package["description"]); ?></p>
 
-                <div class="price-tag" style="margin: 1.2rem 0;">
-                    R<?php echo number_format($package["totalPrice"], 2); ?>
+                <div style="font-size:2rem; font-family:var(--font-display); color:var(--at-accent);
+                            text-shadow:2px 2px 0 var(--at-outline); margin:1.2rem 0;">
+                    R<?php echo number_format($package["basePrice"], 2); ?>
                 </div>
 
                 <hr class="section-divider">
@@ -74,67 +74,61 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="spec-item">
                         <div class="spec-label">Start Date</div>
-                        <div class="spec-value" style="font-size:1rem;"><?php echo htmlspecialchars($package["startDate"]); ?></div>
+                        <div class="spec-value" style="font-size:1rem;"><?php echo $package["startDate"]; ?></div>
                     </div>
                     <div class="spec-item">
                         <div class="spec-label">End Date</div>
-                        <div class="spec-value" style="font-size:1rem;"><?php echo htmlspecialchars($package["endDate"]); ?></div>
+                        <div class="spec-value" style="font-size:1rem;"><?php echo $package["endDate"]; ?></div>
                     </div>
                     <div class="spec-item">
-                        <div class="spec-label">Package Type</div>
-                        <div class="spec-value" style="font-size:1rem;"><?php echo ucfirst($package["packageType"]); ?></div>
+                        <div class="spec-label">Agency Rating</div>
+                        <div class="spec-value" style="color:var(--at-accent);">★ <?php echo $package["agencyRating"]; ?></div>
                     </div>
                 </div>
 
                 <hr class="section-divider">
 
                 <div class="spec-label" style="margin-bottom:.5rem;">Itinerary</div>
-                <div class="itinerary-block"><?php echo nl2br(htmlspecialchars($package["itinerary"])); ?></div>
+                <p class="view-description"><?php echo nl2br(htmlspecialchars($package["itinerary"])); ?></p>
 
-                <div class="btn-row" style="margin-top:1.8rem;">
-                    <a class="btn" href="book_package.php?id=<?php echo $package["packageID"]; ?>">Book This Package</a>
-                    <a class="btn-secondary" href="leave_review.php?id=<?php echo $package["packageID"]; ?>">Leave a Review</a>
-                </div>
-            </div>
-
-            <!-- Side panel: Agency + Reviews -->
-            <div style="display:flex; flex-direction:column; gap:1.4rem;">
-
-                <div class="detail-panel">
-                    <h2>Agency Info</h2>
-                    <div class="detail-row-item"><strong>Agency</strong><span><?php echo htmlspecialchars($package["agencyName"]); ?></span></div>
-                    <div class="detail-row-item"><strong>Phone</strong><span><?php echo htmlspecialchars($package["agencyPhone"]); ?></span></div>
-                    <div class="detail-row-item"><strong>Website</strong><span><?php echo htmlspecialchars($package["agencyWebsite"]); ?></span></div>
-                    <div class="detail-row-item"><strong>Address</strong><span><?php echo htmlspecialchars($package["agencyAddress"]); ?></span></div>
-                    <div class="detail-row-item"><strong>Rating</strong>
-                        <span style="color:var(--gold);">★ <?php echo htmlspecialchars($package["agencyRating"]); ?>/5</span>
+                <?php if (isTraveller()): ?>
+                    <div style="display:flex; gap:1rem; margin-top:1.8rem; flex-wrap:wrap;">
+                        <a class="btn-primary" href="book_package.php?id=<?php echo $package["packageID"]; ?>">Book This Package</a>
+                        <a class="btn-secondary" href="leave_review.php?id=<?php echo $package["packageID"]; ?>">Leave a Review</a>
                     </div>
+                <?php endif; ?>
+
+                <hr class="section-divider" style="margin-top:2rem;">
+
+                <!-- Agency info -->
+                <div class="glass-card" style="margin-top:1rem;">
+                    <h3 style="font-family:var(--font-display); color:var(--at-accent); margin-bottom:1rem;">Agency Info</h3>
+                    <div class="detail-row"><span>Name</span><strong><?php echo htmlspecialchars($package["agencyName"]); ?></strong></div>
+                    <div class="detail-row"><span>Phone</span><strong><?php echo htmlspecialchars($package["agencyPhone"] ?? "N/A"); ?></strong></div>
+                    <div class="detail-row"><span>Website</span><strong><?php echo htmlspecialchars($package["agencyWebsite"] ?? "N/A"); ?></strong></div>
+                    <div class="detail-row"><span>Address</span><strong><?php echo htmlspecialchars($package["agencyAddress"] ?? "N/A"); ?></strong></div>
                 </div>
 
-                <div class="detail-panel">
-                    <h2>Reviews</h2>
+                <!-- Reviews -->
+                <div class="glass-card" style="margin-top:1.4rem;">
+                    <h3 style="font-family:var(--font-display); color:var(--at-accent); margin-bottom:1rem;">
+                        Reviews (<?php echo count($reviews); ?>)
+                    </h3>
                     <?php if (count($reviews) > 0): ?>
-                        <div class="reviews-list">
-                            <?php foreach ($reviews as $review): ?>
-                                <div class="review-card">
-                                    <div class="review-rating">★ <?php echo htmlspecialchars($review["rating"]); ?>/5</div>
-                                    <p><?php echo htmlspecialchars($review["comment"]); ?></p>
-                                    <small>
-                                        By <?php echo htmlspecialchars($review["travellerName"]); ?>
-                                        on <?php echo htmlspecialchars($review["reviewDate"]); ?>
-                                    </small>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
+                        <?php foreach ($reviews as $r): ?>
+                            <div style="border-bottom:1px dashed rgba(255,255,255,0.1); padding:0.8rem 0;">
+                                <div style="color:var(--at-accent); font-family:var(--font-display);">★ <?php echo $r["rating"]; ?>/5</div>
+                                <p style="color:var(--text-light); font-size:14px; margin:.3rem 0;"><?php echo htmlspecialchars($r["comment"]); ?></p>
+                                <small style="color:var(--text-dim);">By <?php echo htmlspecialchars($r["travellerName"]); ?> · <?php echo $r["reviewDate"]; ?></small>
+                            </div>
+                        <?php endforeach; ?>
                     <?php else: ?>
                         <p style="color:var(--text-dim); font-size:14px;">No reviews yet. Be the first!</p>
                     <?php endif; ?>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>

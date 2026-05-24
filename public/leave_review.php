@@ -3,34 +3,16 @@ require_once "../includes/db.php";
 require_once "../includes/auth.php";
 
 requireLogin();
+if (!isTraveller()) { die("Only travellers can leave reviews."); }
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) { die("Invalid package ID."); }
 
-if (!isTraveller()) {
-    die("Only travellers can leave reviews.");
-}
-
-if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
-    die("Invalid package ID.");
-}
-
-$packageID = $_GET["id"];
+$packageID = (int)$_GET["id"];
 $userID    = $_SESSION["user_id"];
 
-$stmt = $pdo->prepare("SELECT travellerID FROM traveller WHERE userID = ?");
-$stmt->execute([$userID]);
-$traveller = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$traveller) {
-    die("Traveller profile not found.");
-}
-$travellerID = $traveller["travellerID"];
-
-$stmt = $pdo->prepare("SELECT packageID, title, agencyID FROM travelPackage WHERE packageID = ?");
+$stmt = $pdo->prepare("SELECT packageID, title FROM TravelPackage WHERE packageID=?");
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$package) {
-    die("Package not found.");
-}
+if (!$package) { die("Package not found."); }
 
 $message = "";
 $msgType = "error";
@@ -43,11 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Rating must be between 1 and 5.";
     } else {
         $stmt = $pdo->prepare("
-            INSERT INTO review (travellerID, targetType, packageID, agencyID, rating, comment)
+            INSERT INTO Review (travellerUserID, targetType, packageID, agencyUserID, rating, comment)
             VALUES (?, 'package', ?, NULL, ?, ?)
         ");
-        $stmt->execute([$travellerID, $packageID, $rating, $comment]);
-        $message = "Review submitted successfully!";
+        $stmt->execute([$userID, $packageID, $rating, $comment]);
+        $message = "Review submitted!";
         $msgType = "success";
     }
 }
@@ -61,37 +43,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
 <?php include "../includes/navbar.php"; ?>
-
 <div class="wrapper">
     <div class="page-content">
         <a class="btn-back" href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
-
         <h1 class="page-title">Leave a Review</h1>
         <p class="page-subtitle"><?php echo htmlspecialchars($package["title"]); ?></p>
 
         <div class="glass-card" style="max-width:480px;">
-
             <?php if ($message): ?>
                 <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
-
-            <form method="POST" class="auth-form">
+            <form method="POST">
                 <div class="form-group">
-                    <label for="rating">Rating (1 – 5)</label>
-                    <input type="number" id="rating" name="rating" step="0.1" min="1" max="5" required placeholder="e.g. 4.5">
+                    <label>Rating (1–5)</label>
+                    <input type="number" name="rating" step="0.1" min="1" max="5" required placeholder="e.g. 4.5">
                 </div>
                 <div class="form-group">
-                    <label for="comment">Your Review</label>
-                    <textarea id="comment" name="comment" rows="4" required
-                        placeholder="Share your experience with this package…"></textarea>
+                    <label>Your Review</label>
+                    <textarea name="comment" rows="4" required placeholder="Share your experience…"></textarea>
                 </div>
-                <button type="submit" class="btn-search">Submit Review</button>
+                <button type="submit" class="btn-search" style="margin-top:1rem;">Submit Review</button>
             </form>
         </div>
     </div>
 </div>
-
 </body>
 </html>

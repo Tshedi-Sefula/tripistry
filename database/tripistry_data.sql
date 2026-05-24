@@ -80,33 +80,7 @@ CREATE TABLE TravellerPreference (
 -- ============================================================
 --  3. ROLE ENFORCEMENT TRIGGERS
 -- ============================================================
-DELIMITER $$
 
-CREATE OR REPLACE TRIGGER trg_agency_role_check
-BEFORE INSERT ON TravelAgency
-FOR EACH ROW
-BEGIN
-    DECLARE v_role ENUM('traveller','agency');
-    SELECT role INTO v_role FROM User WHERE userID = NEW.userID;
-    IF v_role != 'agency' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'User role must be agency to insert into TravelAgency.';
-    END IF;
-END$$
-
-CREATE OR REPLACE TRIGGER trg_traveller_role_check
-BEFORE INSERT ON Traveller
-FOR EACH ROW
-BEGIN
-    DECLARE v_role ENUM('traveller','agency');
-    SELECT role INTO v_role FROM User WHERE userID = NEW.userID;
-    IF v_role != 'traveller' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'User role must be traveller to insert into Traveller.';
-    END IF;
-END$$
-
-DELIMITER ;
 
 -- ============================================================
 --  4. TRAVEL CONTENT
@@ -254,20 +228,7 @@ CREATE TABLE Review (
         REFERENCES TravelAgency(userID) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
-DELIMITER $$
-CREATE OR REPLACE TRIGGER trg_review_target_check
-BEFORE INSERT ON Review
-FOR EACH ROW
-BEGIN
-    IF NOT (
-        (NEW.targetType = 'package' AND NEW.packageID IS NOT NULL AND NEW.agencyUserID IS NULL) OR
-        (NEW.targetType = 'agency'  AND NEW.agencyUserID IS NOT NULL AND NEW.packageID IS NULL)
-    ) THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Review must target either a package or an agency, not both or neither.';
-    END IF;
-END$$
-DELIMITER ;
+
 
 -- ============================================================
 --  8. JUNCTION TABLES

@@ -14,9 +14,10 @@ from datetime import date, timedelta
 fake = Faker()
 
 DB_CONFIG = { # this section can be modified to suit whatever DBMS you use, i.e. mysql
-    'host': 'localhost',
+    'host': '127.0.0.1',
+    'port': 8889,
     'user': 'root', 
-    'password': 'password', # use your password
+    'password': 'root', # use your password
     'database': 'tripistry',
     'autocommit': False
 }

@@ -6,22 +6,30 @@ requireLogin();
 
 $sort = $_GET["sort"] ?? "price_asc";
 $type = $_GET["type"] ?? "";
+$search = trim($_GET["search"] ?? "");
 
-$orderBy = "totalPrice ASC";
-if ($sort === "price_desc")     $orderBy = "totalPrice DESC";
-elseif ($sort === "duration_asc")  $orderBy = "durationDays ASC";
-elseif ($sort === "duration_desc") $orderBy = "durationDays DESC";
+$orderBy = "p.basePrice ASC";
+if ($sort === "price_desc")    $orderBy = "p.basePrice DESC";
+elseif ($sort === "duration_asc")  $orderBy = "p.durationDays ASC";
+elseif ($sort === "duration_desc") $orderBy = "p.durationDays DESC";
 
 $sql = "
-    SELECT packageID, title, description, totalPrice, durationDays, packageType, status
-    FROM travelPackage
-    WHERE status = 'active'
+    SELECT p.packageID, p.title, p.description, p.basePrice, p.durationDays, p.packageType,
+           a.name AS agencyName, a.rating AS agencyRating
+    FROM TravelPackage p
+    JOIN TravelAgency a ON p.agencyUserID = a.userID
+    WHERE p.status = 'active'
 ";
 
 $params = [];
 if ($type !== "") {
-    $sql .= " AND packageType = ?";
+    $sql .= " AND p.packageType = ?";
     $params[] = $type;
+}
+if ($search !== "") {
+    $sql .= " AND (p.title LIKE ? OR p.description LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
 }
 $sql .= " ORDER BY $orderBy";
 
@@ -38,58 +46,63 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
 <?php include "../includes/navbar.php"; ?>
-
 <div class="wrapper">
     <div class="page-content">
         <h1 class="page-title">Available Packages</h1>
         <p class="page-subtitle">EXPLORE ADVENTURES FROM OUR PARTNER AGENCIES</p>
 
-        <!-- Toolbar / Filters -->
-        <div class="packages-toolbar">
-            <form method="GET" style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap; width:100%;">
-                <label>Sort by</label>
-                <select name="sort">
-                    <option value="price_asc"      <?php if ($sort === "price_asc")      echo "selected"; ?>>Price: Low → High</option>
-                    <option value="price_desc"     <?php if ($sort === "price_desc")     echo "selected"; ?>>Price: High → Low</option>
-                    <option value="duration_asc"   <?php if ($sort === "duration_asc")   echo "selected"; ?>>Duration: Short → Long</option>
-                    <option value="duration_desc"  <?php if ($sort === "duration_desc")  echo "selected"; ?>>Duration: Long → Short</option>
-                </select>
+        <form method="GET" class="packages-toolbar" style="margin-bottom:2rem;">
+            <input class="search-bar" type="text" name="search"
+                   placeholder="Search packages…"
+                   value="<?php echo htmlspecialchars($search); ?>">
 
-                <label>Type</label>
-                <select name="type">
-                    <option value="">All Types</option>
-                    <option value="regular" <?php if ($type === "regular") echo "selected"; ?>>Regular</option>
-                    <option value="group"   <?php if ($type === "group")   echo "selected"; ?>>Group</option>
-                </select>
+            <select class="toolbar-select" name="sort">
+                <option value="price_asc"     <?php if ($sort==="price_asc")     echo "selected"; ?>>Price ↑</option>
+                <option value="price_desc"    <?php if ($sort==="price_desc")    echo "selected"; ?>>Price ↓</option>
+                <option value="duration_asc"  <?php if ($sort==="duration_asc")  echo "selected"; ?>>Duration ↑</option>
+                <option value="duration_desc" <?php if ($sort==="duration_desc") echo "selected"; ?>>Duration ↓</option>
+            </select>
 
-                <button type="submit" class="btn">Apply</button>
-            </form>
-        </div>
+            <select class="toolbar-select" name="type">
+                <option value="">All Types</option>
+                <option value="regular" <?php if ($type==="regular") echo "selected"; ?>>Regular</option>
+                <option value="group"   <?php if ($type==="group")   echo "selected"; ?>>Group</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Filter</button>
+        </form>
 
         <?php if (count($packages) > 0): ?>
-            <div class="packages-grid">
+            <div class="planes-grid">
                 <?php foreach ($packages as $pkg): ?>
-                    <div class="package-card">
-                        <h2><?php echo htmlspecialchars($pkg["title"]); ?></h2>
-                        <p><?php echo htmlspecialchars($pkg["description"]); ?></p>
-                        <div class="price-tag">R<?php echo number_format($pkg["totalPrice"], 2); ?></div>
-                        <div class="package-meta">
-                            <span class="meta-badge">⏱ <?php echo $pkg["durationDays"]; ?> days</span>
-                            <span class="meta-badge"><?php echo ucfirst($pkg["packageType"]); ?></span>
+                    <a class="plane-card-link" href="package_details.php?id=<?php echo $pkg["packageID"]; ?>">
+                        <div class="plane-card">
+                            <div class="plane-card-img">
+                                <span class="plane-emoji">✈️</span>
+                            </div>
+                            <div class="plane-card-body">
+                                <div class="plane-manufacturer"><?php echo htmlspecialchars($pkg["agencyName"]); ?> · ★ <?php echo $pkg["agencyRating"]; ?></div>
+                                <div class="plane-model"><?php echo htmlspecialchars($pkg["title"]); ?></div>
+                                <div class="plane-stats">
+                                    <div class="plane-stat"><strong>R<?php echo number_format($pkg["basePrice"], 2); ?></strong>price</div>
+                                    <div class="plane-stat"><strong><?php echo $pkg["durationDays"]; ?> days</strong>duration</div>
+                                    <div class="plane-stat"><strong><?php echo ucfirst($pkg["packageType"]); ?></strong>type</div>
+                                </div>
+                            </div>
+                            <div class="plane-card-footer">
+                                <span class="btn-view">View Details →</span>
+                            </div>
                         </div>
-                        <a class="btn" href="package_details.php?id=<?php echo $pkg["packageID"]; ?>">View Details</a>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
             <div class="glass-card" style="text-align:center; padding:3rem;">
-                <p style="color:var(--text-dim); font-size:16px;">No travel packages found.</p>
+                <p style="color:var(--text-dim); font-size:16px;">No packages found.</p>
             </div>
         <?php endif; ?>
     </div>
 </div>
-
 </body>
 </html>
