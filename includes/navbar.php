@@ -61,7 +61,7 @@ body {
             <a href="traveller_dashboard.php">Dashboard</a>
             <a href="packages.php">Packages</a>
             <a href="my_bookings.php">My Bookings</a>
-
+            <a href="recommendations.php">Recommendations</a>
         <?php elseif ($userRole === "agency"): ?>
 
             <a href="agency_dashboard.php">Dashboard</a>

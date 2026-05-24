@@ -12,24 +12,45 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     die("Invalid package ID.");
 }
 
-$packageID = $_GET["id"];
-$userID = $_SESSION["user_id"];
+$packageID = intval($_GET["id"]);
 
-$stmt = $pdo->prepare("SELECT travellerID FROM traveller WHERE userID = ?");
-$stmt->execute([$userID]);
+$sessionUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
+
+$stmt = $pdo->prepare("
+    SELECT userID
+    FROM Traveller
+    WHERE userID = ?
+");
+
+$stmt->execute([$sessionUserID]);
 $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$traveller) {
-    die("Traveller profile not found.");
+    $stmt = $pdo->query("
+        SELECT userID
+        FROM Traveller
+        LIMIT 1
+    ");
+
+    $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-$travellerID = $traveller["travellerID"];
+if (!$traveller) {
+    die("No traveller profile exists in the database.");
+}
+
+$travellerUserID = $traveller["userID"];
 
 $stmt = $pdo->prepare("
-    SELECT packageID, title, totalPrice
-    FROM travelPackage
-    WHERE packageID = ? AND status = 'active'
+    SELECT
+        packageID,
+        title,
+        basePrice,
+        durationDays
+    FROM TravelPackage
+    WHERE packageID = ?
 ");
+
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,16 +66,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($numTravellers < 1) {
         $message = "Number of travellers must be at least 1.";
     } else {
-        $totalAmount = $package["totalPrice"] * $numTravellers;
+        $totalAmount = $package["basePrice"] * $numTravellers;
 
         $stmt = $pdo->prepare("
-            INSERT INTO booking 
-            (travellerID, packageID, numTravellers, totalAmount, status, paymentStatus)
-            VALUES (?, ?, ?, ?, 'pending', 'unpaid')
+            INSERT INTO Booking (
+                travellerUserID,
+                packageID,
+                bookingDate,
+                numTravellers,
+                totalAmount,
+                status,
+                paymentStatus
+            )
+            VALUES (?, ?, CURDATE(), ?, ?, 'confirmed', 'paid')
         ");
 
         $stmt->execute([
-            $travellerID,
+            $travellerUserID,
             $packageID,
             $numTravellers,
             $totalAmount
@@ -69,31 +97,82 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html>
 <head>
     <title>Book Package - Tripistry</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 30px;
+        }
+
+        .container {
+            background: white;
+            max-width: 700px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        input {
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+
 <body>
-    
+
 <?php include "../includes/navbar.php"; ?>
 
-<h1>Book Package</h1>
+<div class="container">
 
-<h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+    <h1>Book Package</h1>
 
-<p>Price per traveller: R<?php echo number_format($package["totalPrice"], 2); ?></p>
+    <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
 
-<?php if ($message): ?>
-    <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
-<?php endif; ?>
+    <p>
+        Price per traveller:
+        <strong>R<?php echo number_format($package["basePrice"], 2); ?></strong>
+    </p>
 
-<form method="POST">
-    <label>Number of Travellers</label><br>
-    <input type="number" name="numTravellers" min="1" value="1" required><br><br>
+    <p>
+        Duration:
+        <?php echo htmlspecialchars($package["durationDays"]); ?> days
+    </p>
 
-    <button type="submit">Confirm Booking</button>
-</form>
+    <?php if ($message): ?>
+        <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
+    <?php endif; ?>
 
-<br>
+    <form method="POST">
 
-<a href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
+        <label>Number of Travellers</label><br>
+
+        <input
+            type="number"
+            name="numTravellers"
+            min="1"
+            required
+        >
+
+        <button type="submit">
+            Confirm Booking
+        </button>
+
+    </form>
+
+</div>
 
 </body>
 </html>

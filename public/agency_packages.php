@@ -12,7 +12,7 @@ $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
     SELECT agencyID
-    FROM travelAgency
+    FROM TravelAgency
     WHERE userID = ?
 ");
 $stmt->execute([$userID]);
@@ -33,7 +33,7 @@ $stmt = $pdo->prepare("
         durationDays,
         status,
         packageType
-    FROM travelPackage
+    FROM TravelPackage
     WHERE agencyID = ?
     ORDER BY dateCreated DESC
 ");

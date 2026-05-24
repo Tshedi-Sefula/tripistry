@@ -8,23 +8,11 @@ if (!isTraveller()) {
     die("Access denied.");
 }
 
-$userID = $_SESSION["user_id"];
+$travellerUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
 
-$stmt = $pdo->prepare("
-    SELECT travellerID
-    FROM traveller
-    WHERE userID = ?
-");
-
-$stmt->execute([$userID]);
-
-$traveller = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$traveller) {
-    die("Traveller profile not found.");
+if ($travellerUserID === null) {
+    die("User session not found.");
 }
-
-$travellerID = $traveller["travellerID"];
 
 $stmt = $pdo->prepare("
     SELECT
@@ -35,14 +23,14 @@ $stmt = $pdo->prepare("
         b.status,
         b.paymentStatus,
         p.title
-    FROM booking b
-    JOIN travelPackage p
+    FROM Booking b
+    JOIN TravelPackage p
         ON b.packageID = p.packageID
-    WHERE b.travellerID = ?
+    WHERE b.travellerUserID = ?
     ORDER BY b.bookingDate DESC
 ");
 
-$stmt->execute([$travellerID]);
+$stmt->execute([$travellerUserID]);
 
 $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -72,6 +60,7 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </style>
 </head>
+
 <body>
 
 <?php include "../includes/navbar.php"; ?>
@@ -90,17 +79,17 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <p>
                 <strong>Booking ID:</strong>
-                <?php echo $booking["bookingID"]; ?>
+                <?php echo htmlspecialchars($booking["bookingID"]); ?>
             </p>
 
             <p>
                 <strong>Booking Date:</strong>
-                <?php echo $booking["bookingDate"]; ?>
+                <?php echo htmlspecialchars($booking["bookingDate"]); ?>
             </p>
 
             <p>
                 <strong>Travellers:</strong>
-                <?php echo $booking["numTravellers"]; ?>
+                <?php echo htmlspecialchars($booking["numTravellers"]); ?>
             </p>
 
             <p>
@@ -110,16 +99,16 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <p class="status">
                 Booking Status:
-                <?php echo ucfirst($booking["status"]); ?>
+                <?php echo htmlspecialchars(ucfirst($booking["status"])); ?>
             </p>
 
             <p class="status">
                 Payment Status:
-                <?php echo ucfirst($booking["paymentStatus"]); ?>
+                <?php echo htmlspecialchars(ucfirst($booking["paymentStatus"])); ?>
             </p>
 
             <a
-                href="cancel_booking.php?id=<?php echo $booking["bookingID"]; ?>"
+                href="cancel_booking.php?id=<?php echo htmlspecialchars($booking["bookingID"]); ?>"
                 onclick="return confirm('Are you sure you want to cancel this booking?');"
                 style="
                     display:inline-block;
@@ -130,7 +119,7 @@ $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     text-decoration:none;
                     border-radius:5px;
                 "
-                >
+            >
                 Cancel Booking
             </a>
 

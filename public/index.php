@@ -1,7 +1,7 @@
 <?php
 require_once "../includes/db.php";
 
-$stmt = $pdo->query("SELECT COUNT(*) AS total FROM travelPackage");
+$stmt = $pdo->query("SELECT COUNT(*) AS total FROM TravelPackage");
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 

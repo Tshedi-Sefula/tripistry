@@ -19,7 +19,7 @@ $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
     SELECT agencyID
-    FROM travelAgency
+    FROM TravelAgency
     WHERE userID = ?
 ");
 
@@ -37,7 +37,7 @@ $agencyID = $agency["agencyID"];
 
 $stmt = $pdo->prepare("
     SELECT packageID
-    FROM travelPackage
+    FROM TravelPackage
     WHERE packageID = ?
       AND agencyID = ?
 ");
@@ -52,7 +52,7 @@ if (!$package) {
 
 
 $stmt = $pdo->prepare("
-    DELETE FROM travelPackage
+    DELETE FROM TravelPackage
     WHERE packageID = ?
       AND agencyID = ?
 ");

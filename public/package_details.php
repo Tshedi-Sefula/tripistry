@@ -15,22 +15,20 @@ $stmt = $pdo->prepare("
         p.packageID,
         p.title,
         p.description,
-        p.totalPrice,
+        p.basePrice,
         p.durationDays,
         p.startDate,
         p.endDate,
         p.itinerary,
-        p.packageType,
+        p.status,
         a.name AS agencyName,
-        a.phone AS agencyPhone,
         a.website AS agencyWebsite,
         a.address AS agencyAddress,
         a.rating AS agencyRating
-    FROM travelPackage p
-    JOIN travelAgency a ON p.agencyID = a.agencyID
+    FROM TravelPackage p
+    JOIN TravelAgency a ON p.agencyUserID = a.userID
     WHERE p.packageID = ?
 ");
-
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -43,9 +41,10 @@ $reviewStmt = $pdo->prepare("
         r.rating,
         r.comment,
         r.reviewDate,
-        t.name AS travellerName
-    FROM review r
-    JOIN traveller t ON r.travellerID = t.travellerID
+        r.sentiment,
+        u.email AS travellerName
+    FROM Review r
+    JOIN User u ON r.travellerUserID = u.userID
     WHERE r.packageID = ?
       AND r.targetType = 'package'
     ORDER BY r.reviewDate DESC
@@ -116,11 +115,11 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     <p><?php echo htmlspecialchars($package["description"]); ?></p>
 
     <p class="price">
-        R<?php echo number_format($package["totalPrice"], 2); ?>
+        R<?php echo number_format($package["basePrice"], 2); ?>
     </p>
 
     <p><strong>Duration:</strong> <?php echo $package["durationDays"]; ?> days</p>
-    <p><strong>Package Type:</strong> <?php echo ucfirst($package["packageType"]); ?></p>
+    <p><strong>Package Type:</strong> <?php echo ucfirst($package["status"]); ?></p>
     <p><strong>Start Date:</strong> <?php echo htmlspecialchars($package["startDate"]); ?></p>
     <p><strong>End Date:</strong> <?php echo htmlspecialchars($package["endDate"]); ?></p>
 
@@ -144,7 +143,10 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                 <p><strong>Rating:</strong> <?php echo htmlspecialchars($review["rating"]); ?>/5</p>
 
                 <p><?php echo htmlspecialchars($review["comment"]); ?></p>
-
+                <p>
+                    <strong>Sentiment:</strong>
+                    <?php echo htmlspecialchars($review["sentiment"]); ?>
+                </p>
                 <p>
                     <small>
                         By <?php echo htmlspecialchars($review["travellerName"]); ?>

@@ -12,7 +12,7 @@ $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
     SELECT agencyID
-    FROM travelAgency
+    FROM TravelAgency
     WHERE userID = ?
 ");
 $stmt->execute([$userID]);
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Please fill in all required fields correctly.";
     } else {
         $stmt = $pdo->prepare("
-            INSERT INTO travelPackage
+            INSERT INTO TravelPackage
             (
                 agencyID,
                 title,

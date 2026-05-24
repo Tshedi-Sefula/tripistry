@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($email === "" || $password === "" || ($role !== "traveller" && $role !== "agency")) {
         $message = "Please fill in all fields correctly.";
     } else {
-        $stmt = $pdo->prepare("SELECT userID FROM user WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT userID FROM User WHERE email = ?");
         $stmt->execute([$email]);
 
         if ($stmt->fetch()) {
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $pdo->prepare("
-                INSERT INTO user (email, passwordHash, role)
+                INSERT INTO User (email, passwordHash, role)
                 VALUES (?, ?, ?)
             ");
             $stmt->execute([$email, $passwordHash, $role]);
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $preferences = trim($_POST["preferences"]);
 
                 $stmt = $pdo->prepare("
-                    INSERT INTO traveller
+                    INSERT INTO Traveller
                     (userID, firstName, lastName, phoneNo, nationality, dateOfBirth, preferences)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 ");
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $description = trim($_POST["agencyDescription"]);
 
                 $stmt = $pdo->prepare("
-                    INSERT INTO travelAgency
+                    INSERT INTO TravelAgency
                     (userID, name, phone, website, address, description)
                     VALUES (?, ?, ?, ?, ?, ?)
                 ");

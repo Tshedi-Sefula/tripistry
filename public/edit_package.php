@@ -17,7 +17,7 @@ $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
     SELECT agencyID
-    FROM travelAgency
+    FROM TravelAgency
     WHERE userID = ?
 ");
 $stmt->execute([$userID]);
@@ -31,7 +31,7 @@ $agencyID = $agency["agencyID"];
 
 $stmt = $pdo->prepare("
     SELECT *
-    FROM travelPackage
+    FROM TravelPackage
     WHERE packageID = ?
       AND agencyID = ?
 ");
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Please fill in all required fields correctly.";
     } else {
         $stmt = $pdo->prepare("
-            UPDATE travelPackage
+            UPDATE TravelPackage
             SET
                 title = ?,
                 description = ?,
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $stmt = $pdo->prepare("
             SELECT *
-            FROM travelPackage
+            FROM TravelPackage
             WHERE packageID = ?
               AND agencyID = ?
         ");

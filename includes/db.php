@@ -3,7 +3,6 @@ $host = "localhost";
 $dbname = "tripistry";
 $username = "tripistry_user";
 $password = "tripistry123";
-
 try {
     $pdo = new PDO(
         "mysql:host=$host;dbname=$dbname;charset=utf8mb4",

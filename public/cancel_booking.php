@@ -18,7 +18,7 @@ $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
     SELECT travellerID
-    FROM traveller
+    FROM Traveller
     WHERE userID = ?
 ");
 

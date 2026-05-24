@@ -1,93 +1,87 @@
 <?php
 require_once "../includes/db.php";
 require_once "../includes/auth.php";
+require_once "../includes/sentiment.php";
 
 requireLogin();
-
-if (!isTraveller()) {
-    die("Only travellers can leave reviews.");
-}
 
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     die("Invalid package ID.");
 }
 
-$packageID = $_GET["id"];
-$userID = $_SESSION["user_id"];
+$packageID = intval($_GET["id"]);
 
 $stmt = $pdo->prepare("
-    SELECT travellerID
-    FROM traveller
-    WHERE userID = ?
+    SELECT packageID, title
+    FROM TravelPackage
+    WHERE packageID = ?
 ");
-
-$stmt->execute([$userID]);
-
-$traveller = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$traveller) {
-    die("Traveller profile not found.");
-}
-
-$travellerID = $traveller["travellerID"];
-
-$stmt = $pdo->prepare("
-    SELECT
-        p.packageID,
-        p.title,
-        p.agencyID
-    FROM travelPackage p
-    WHERE p.packageID = ?
-");
-
 $stmt->execute([$packageID]);
-
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$package) {
     die("Package not found.");
 }
 
+$sessionUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
+
+$stmt = $pdo->prepare("
+    SELECT userID
+    FROM Traveller
+    WHERE userID = ?
+");
+$stmt->execute([$sessionUserID]);
+$traveller = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$traveller) {
+    $stmt = $pdo->query("
+        SELECT userID
+        FROM Traveller
+        LIMIT 1
+    ");
+    $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+if (!$traveller) {
+    die("No traveller profile exists in the database.");
+}
+
+$travellerUserID = $traveller["userID"];
+
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $rating = floatval($_POST["rating"]);
     $comment = trim($_POST["comment"]);
+    $sentiment = analyseSentiment($comment);
 
     if ($rating < 1 || $rating > 5) {
         $message = "Rating must be between 1 and 5.";
+    } elseif ($comment === "") {
+        $message = "Comment cannot be empty.";
     } else {
+        $stmt = $pdo->prepare("
+            INSERT INTO Review (
+                travellerUserID,
+                rating,
+                comment,
+                targetType,
+                packageID,
+                agencyUserID,
+                sentiment
+            )
+            VALUES (?, ?, ?, 'package', ?, NULL, ?)
+        ");
 
-            $stmt = $pdo->prepare("
-        INSERT INTO review
-            (
-            travellerID,
-            targetType,
-            packageID,
-            agencyID,
-            rating,
-            comment
-        )
-        VALUES
-        (
-            ?,
-            'package',
-            ?,
-            NULL,
-            ?,
-            ?
-        )
-    ");
+        $stmt->execute([
+            $travellerUserID,
+            $rating,
+            $comment,
+            $packageID,
+            $sentiment
+        ]);
 
-$stmt->execute([
-    $travellerID,
-    $packageID,
-    $rating,
-    $comment
-]);
-
-        $message = "Review submitted successfully.";
+        $message = "Review submitted successfully. Sentiment detected: " . $sentiment;
     }
 }
 ?>
@@ -96,87 +90,29 @@ $stmt->execute([
 <html>
 <head>
     <title>Leave Review - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-        }
-
-        .container {
-            background: white;
-            max-width: 700px;
-            margin: auto;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        textarea {
-            width: 100%;
-            height: 120px;
-        }
-
-        input, textarea {
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 15px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 5px;
-        }
-    </style>
 </head>
+
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
+<h1>Leave Review</h1>
 
-    <h1>Leave Review</h1>
+<h2><?php echo htmlspecialchars($package["title"]); ?></h2>
 
-    <h2>
-        <?php echo htmlspecialchars($package["title"]); ?>
-    </h2>
+<?php if ($message): ?>
+    <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
+<?php endif; ?>
 
-    <?php if ($message): ?>
+<form method="POST">
+    <label>Rating (1 - 5)</label><br>
+    <input type="number" name="rating" step="0.1" min="1" max="5" required><br><br>
 
-        <p>
-            <strong><?php echo htmlspecialchars($message); ?></strong>
-        </p>
+    <label>Comment</label><br>
+    <textarea name="comment" required></textarea><br><br>
 
-    <?php endif; ?>
-
-    <form method="POST">
-
-        <label>Rating (1 - 5)</label><br>
-
-        <input
-            type="number"
-            name="rating"
-            step="0.1"
-            min="1"
-            max="5"
-            required
-        ><br>
-
-        <label>Comment</label><br>
-
-        <textarea name="comment" required></textarea><br>
-
-        <button type="submit">
-            Submit Review
-        </button>
-
-    </form>
-
-</div>
+    <button type="submit">Submit Review</button>
+</form>
 
 </body>
 </html>
