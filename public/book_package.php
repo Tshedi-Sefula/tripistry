@@ -13,7 +13,6 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 }
 
 $packageID = intval($_GET["id"]);
-
 $sessionUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
 
 $stmt = $pdo->prepare("
@@ -59,6 +58,7 @@ if (!$package) {
 }
 
 $message = "";
+$success = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $numTravellers = intval($_POST["numTravellers"]);
@@ -89,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ]);
 
         $message = "Booking created successfully.";
+        $success = true;
     }
 }
 ?>
@@ -107,21 +108,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <div class="wrapper">
     <div class="page-content">
-        <a class="btn-back" href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
+        <a class="btn-back" href="package_details.php?id=<?php echo htmlspecialchars($packageID); ?>">Back to Package</a>
 
         <h1 class="page-title">Book Package</h1>
         <p class="page-subtitle">CONFIRM YOUR TRAVEL BOOKING</p>
 
         <div class="glass-card" style="max-width:540px;">
             <div class="view-manufacturer">Package</div>
+
             <div class="view-model" style="font-size:1.6rem; margin-bottom:.4rem;">
                 <?php echo htmlspecialchars($package["title"]); ?>
             </div>
+
             <p style="color:var(--text-dim); font-size:14px; margin-bottom:.4rem;">
-                <strong>Duration:</strong> <?php echo htmlspecialchars($package["durationDays"]); ?> days
+                <strong>Duration:</strong>
+                <?php echo htmlspecialchars($package["durationDays"]); ?> days
             </p>
+
             <p style="color:var(--text-dim); font-size:14px; margin-bottom:1.2rem;">
-                Price per traveller: <strong style="color:var(--gold);">R<?php echo number_format($package["basePrice"], 2); ?></strong>
+                Price per traveller:
+                <strong style="color:var(--gold);">
+                    R<?php echo number_format($package["basePrice"], 2); ?>
+                </strong>
             </p>
 
             <?php if ($message): ?>
@@ -136,6 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <label for="numTravellers">Number of Travellers</label>
                         <input type="number" id="numTravellers" name="numTravellers" min="1" required>
                     </div>
+
                     <button type="submit" class="btn-search">Confirm Booking</button>
                 </form>
             <?php else: ?>
