@@ -10,11 +10,7 @@ if (!isAgency()) {
 
 $userID = $_SESSION["user_id"];
 
-$stmt = $pdo->prepare("
-    SELECT agencyID
-    FROM TravelAgency
-    WHERE userID = ?
-");
+$stmt = $pdo->prepare("SELECT * FROM TravelAgency WHERE userID = ?");
 $stmt->execute([$userID]);
 $agency = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -22,23 +18,21 @@ if (!$agency) {
     die("Agency profile not found.");
 }
 
-$agencyID = $agency["agencyID"];
-
 $stmt = $pdo->prepare("
-    SELECT
+    SELECT 
         packageID,
         title,
         description,
-        totalPrice,
+        basePrice,
+        itinerary,
         durationDays,
         status,
-        packageType
-    FROM TravelPackage
-    WHERE agencyID = ?
+        dateCreated
+    FROM TravelPackage 
+    WHERE agencyUserID = ? 
     ORDER BY dateCreated DESC
 ");
-
-$stmt->execute([$agencyID]);
+$stmt->execute([$userID]);
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -101,9 +95,9 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <p><?php echo htmlspecialchars($package["description"]); ?></p>
 
-            <p><strong>Price:</strong> R<?php echo number_format($package["totalPrice"], 2); ?></p>
+            <p><strong>Price:</strong> R<?php echo number_format($package["basePrice"], 2); ?></p>
             <p><strong>Duration:</strong> <?php echo $package["durationDays"]; ?> days</p>
-            <p><strong>Type:</strong> <?php echo ucfirst($package["packageType"]); ?></p>
+            <p><strong>Type:</strong> <?php echo ($package["itinerary"]); ?></p>
             <p><strong>Status:</strong> <?php echo ucfirst($package["status"]); ?></p>
 
             <a class="btn" href="edit_package.php?id=<?php echo $package["packageID"]; ?>">

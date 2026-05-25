@@ -5,28 +5,79 @@ require_once "../includes/auth.php";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $email = trim($_POST["email"]);
     $password = trim($_POST["password"]);
+    $ipAddress = $_SERVER["REMOTE_ADDR"] ?? "unknown";
 
-    $stmt = $pdo->prepare("SELECT * FROM User WHERE email = ?");
-    $stmt->execute([$email]);
+    
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) AS failedAttempts
+        FROM LoginAttempt
+        WHERE email = ?
+          AND ipAddress = ?
+          AND success = 0
+          AND attemptTime >= (NOW() - INTERVAL 5 MINUTE)
+    ");
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->execute([$email, $ipAddress]);
 
-    if ($user && password_verify($password, $user["passwordHash"])) {
-        $_SESSION["user_id"] = $user["userID"];
-        $_SESSION["email"] = $user["email"];
-        $_SESSION["role"] = $user["role"];
+    $attemptData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user["role"] === "traveller") {
-            header("Location: traveller_dashboard.php");
-        } else {
-            header("Location: agency_dashboard.php");
-        }
+    if ($attemptData["failedAttempts"] >= 5) {
 
-        exit();
+        $error = "Too many failed login attempts. Please wait 5 minutes and try again.";
+
     } else {
-        $error = "Invalid email or password.";
+
+        
+        $stmt = $pdo->prepare("SELECT * FROM User WHERE email = ?");
+        $stmt->execute([$email]);
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        
+        if ($user && password_verify($password, $user["passwordHash"])) {
+
+           
+            $stmt = $pdo->prepare("
+                INSERT INTO LoginAttempt (email, ipAddress, success)
+                VALUES (?, ?, 1)
+            ");
+
+            $stmt->execute([$email, $ipAddress]);
+
+            
+            session_regenerate_id(true);
+
+            $_SESSION["user_id"] = $user["userID"];
+            $_SESSION["email"] = $user["email"];
+            $_SESSION["role"] = $user["role"];
+
+            if ($user["role"] === "traveller") {
+
+                header("Location: traveller_dashboard.php");
+
+            } else {
+
+                header("Location: agency_dashboard.php");
+
+            }
+
+            exit();
+
+        } else {
+
+            
+            $stmt = $pdo->prepare("
+                INSERT INTO LoginAttempt (email, ipAddress, success)
+                VALUES (?, ?, 0)
+            ");
+
+            $stmt->execute([$email, $ipAddress]);
+
+            $error = "Invalid email or password.";
+        }
     }
 }
 ?>

@@ -41,7 +41,6 @@ $reviewStmt = $pdo->prepare("
         r.rating,
         r.comment,
         r.reviewDate,
-        r.sentiment,
         u.email AS travellerName
     FROM Review r
     JOIN User u ON r.travellerUserID = u.userID
@@ -128,7 +127,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
     <h2>Agency Information</h2>
     <p><strong>Agency:</strong> <?php echo htmlspecialchars($package["agencyName"]); ?></p>
-    <p><strong>Phone:</strong> <?php echo htmlspecialchars($package["agencyPhone"]); ?></p>
+    <p><strong>Phone:</strong> Not available</p>
     <p><strong>Website:</strong> <?php echo htmlspecialchars($package["agencyWebsite"]); ?></p>
     <p><strong>Address:</strong> <?php echo htmlspecialchars($package["agencyAddress"]); ?></p>
     <p><strong>Rating:</strong> <?php echo htmlspecialchars($package["agencyRating"]); ?>/5</p>
@@ -146,6 +145,21 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                 <p>
                     <strong>Sentiment:</strong>
                     <?php echo htmlspecialchars($review["sentiment"]); ?>
+                    <a
+    href="delete_review.php?id=<?php echo htmlspecialchars($review["reviewID"]); ?>"
+    onclick="return confirm('Are you sure you want to delete this review?');"
+    style="
+        display:inline-block;
+        margin-top:10px;
+        padding:8px 12px;
+        background:#dc3545;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+    "
+>
+    Delete Review
+</a>
                 </p>
                 <p>
                     <small>
