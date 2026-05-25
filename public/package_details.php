@@ -144,13 +144,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                                         By <?php echo htmlspecialchars($review["travellerName"]); ?>
                                         · <?php echo htmlspecialchars($review["reviewDate"]); ?>
                                     </small>
-                                    <div style="margin-top:.6rem;">
-                                        <a class="btn-cancel"
-                                           href="delete_review.php?id=<?php echo htmlspecialchars($review["reviewID"]); ?>"
-                                           onclick="return confirm('Delete this review?');">
-                                            Delete Review
-                                        </a>
-                                    </div>
+
                                 </div>
                             <?php endforeach; ?>
                         </div>
