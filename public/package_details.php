@@ -8,7 +8,7 @@ if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
     die("Invalid package ID.");
 }
 
-$packageID = intval($_GET["id"]);
+$packageID = $_GET["id"];
 
 $stmt = $pdo->prepare("
     SELECT 
@@ -29,7 +29,6 @@ $stmt = $pdo->prepare("
     JOIN TravelAgency a ON p.agencyUserID = a.userID
     WHERE p.packageID = ?
 ");
-
 $stmt->execute([$packageID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -42,7 +41,6 @@ $reviewStmt = $pdo->prepare("
         r.rating,
         r.comment,
         r.reviewDate,
-        r.sentiment,
         u.email AS travellerName
     FROM Review r
     JOIN User u ON r.travellerUserID = u.userID
@@ -73,6 +71,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="detail-layout">
 
+            <!-- Left: main info -->
             <div>
                 <div class="view-manufacturer">Travel Package</div>
                 <h1 class="view-model"><?php echo htmlspecialchars($package["title"]); ?></h1>
@@ -87,107 +86,60 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="view-specs">
                     <div class="spec-item">
                         <div class="spec-label">Duration</div>
-                        <div class="spec-value">
-                            <?php echo htmlspecialchars($package["durationDays"]); ?>
-                            <span class="spec-unit">days</span>
-                        </div>
+                        <div class="spec-value"><?php echo $package["durationDays"]; ?> <span class="spec-unit">days</span></div>
                     </div>
-
                     <div class="spec-item">
                         <div class="spec-label">Status</div>
                         <div class="spec-value" style="font-size:1rem;">
-                            <span class="badge badge-<?php echo htmlspecialchars($package['status']); ?>">
-                                <?php echo htmlspecialchars(ucfirst($package["status"])); ?>
-                            </span>
+                            <span class="badge badge-<?php echo $package['status']; ?>"><?php echo ucfirst($package["status"]); ?></span>
                         </div>
                     </div>
-
                     <div class="spec-item">
                         <div class="spec-label">Start Date</div>
-                        <div class="spec-value" style="font-size:1rem;">
-                            <?php echo htmlspecialchars($package["startDate"] ?? "TBD"); ?>
-                        </div>
+                        <div class="spec-value" style="font-size:1rem;"><?php echo htmlspecialchars($package["startDate"] ?? "TBD"); ?></div>
                     </div>
-
                     <div class="spec-item">
                         <div class="spec-label">End Date</div>
-                        <div class="spec-value" style="font-size:1rem;">
-                            <?php echo htmlspecialchars($package["endDate"] ?? "TBD"); ?>
-                        </div>
+                        <div class="spec-value" style="font-size:1rem;"><?php echo htmlspecialchars($package["endDate"] ?? "TBD"); ?></div>
                     </div>
                 </div>
 
-                <?php if (!empty($package["itinerary"])): ?>
+                <?php if ($package["itinerary"]): ?>
                     <hr class="section-divider">
                     <div class="spec-label" style="margin-bottom:.5rem;">Itinerary</div>
-                    <div class="itinerary-block">
-                        <?php echo nl2br(htmlspecialchars($package["itinerary"])); ?>
-                    </div>
+                    <div class="itinerary-block"><?php echo nl2br(htmlspecialchars($package["itinerary"])); ?></div>
                 <?php endif; ?>
 
                 <div class="btn-row" style="margin-top:1.8rem;">
-                    <a class="btn" href="book_package.php?id=<?php echo htmlspecialchars($package["packageID"]); ?>">
-                        Book This Package
-                    </a>
-
-                    <a class="btn-secondary" href="leave_review.php?id=<?php echo htmlspecialchars($package["packageID"]); ?>">
-                        Leave Review
-                    </a>
+                    <a class="btn" href="book_package.php?id=<?php echo $package["packageID"]; ?>">Book This Package</a>
+                    <a class="btn-secondary" href="leave_review.php?id=<?php echo $package["packageID"]; ?>">Leave Review</a>
                 </div>
             </div>
 
+            <!-- Right: agency + reviews -->
             <div style="display:flex; flex-direction:column; gap:1.4rem;">
 
                 <div class="detail-panel">
                     <h2>Agency Info</h2>
-
-                    <div class="detail-row-item">
-                        <strong>Agency</strong>
-                        <span><?php echo htmlspecialchars($package["agencyName"]); ?></span>
-                    </div>
-
-                    <div class="detail-row-item">
-                        <strong>Website</strong>
-                        <span><?php echo htmlspecialchars($package["agencyWebsite"] ?? "—"); ?></span>
-                    </div>
-
-                    <div class="detail-row-item">
-                        <strong>Address</strong>
-                        <span><?php echo htmlspecialchars($package["agencyAddress"] ?? "—"); ?></span>
-                    </div>
-
-                    <div class="detail-row-item">
-                        <strong>Rating</strong>
-                        <span style="color:var(--gold);">
-                            ★ <?php echo htmlspecialchars($package["agencyRating"]); ?>/5
-                        </span>
+                    <div class="detail-row-item"><strong>Agency</strong><span><?php echo htmlspecialchars($package["agencyName"]); ?></span></div>
+                    <div class="detail-row-item"><strong>Website</strong><span><?php echo htmlspecialchars($package["agencyWebsite"] ?? "—"); ?></span></div>
+                    <div class="detail-row-item"><strong>Address</strong><span><?php echo htmlspecialchars($package["agencyAddress"] ?? "—"); ?></span></div>
+                    <div class="detail-row-item"><strong>Rating</strong>
+                        <span style="color:var(--gold);">★ <?php echo htmlspecialchars($package["agencyRating"]); ?>/5</span>
                     </div>
                 </div>
 
                 <div class="detail-panel">
                     <h2>Reviews</h2>
-
                     <?php if (count($reviews) > 0): ?>
                         <div class="reviews-list">
-
                             <?php foreach ($reviews as $review): ?>
                                 <div class="review-card">
-
-                                    <div class="review-rating">
-                                        ★ <?php echo htmlspecialchars($review["rating"]); ?>/5
-                                    </div>
-
+                                    <div class="review-rating">★ <?php echo htmlspecialchars($review["rating"]); ?>/5</div>
                                     <p><?php echo htmlspecialchars($review["comment"]); ?></p>
-
                                     <?php if (!empty($review["sentiment"])): ?>
-                                        <p>
-                                            <strong>Sentiment:</strong>
-                                            <span class="badge badge-active">
-                                                <?php echo htmlspecialchars(ucfirst($review["sentiment"])); ?>
-                                            </span>
-                                        </p>
+                                        <p><span class="badge badge-active"><?php echo htmlspecialchars($review["sentiment"]); ?></span></p>
                                     <?php endif; ?>
-
                                     <small>
                                         By <?php echo htmlspecialchars($review["travellerName"]); ?>
                                         · <?php echo htmlspecialchars($review["reviewDate"]); ?>
@@ -195,14 +147,9 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 </div>
                             <?php endforeach; ?>
-
                         </div>
                     <?php else: ?>
-
-                        <p style="color:var(--text-dim); font-size:14px;">
-                            No reviews yet. Be the first!
-                        </p>
-
+                        <p style="color:var(--text-dim); font-size:14px;">No reviews yet. Be the first!</p>
                     <?php endif; ?>
                 </div>
 
