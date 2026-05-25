@@ -36,7 +36,6 @@ $message = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $rating = floatval($_POST["rating"]);
     $comment = trim($_POST["comment"]);
-    $sentiment = analyseSentiment($comment);
 
     if ($rating < 1 || $rating > 5) {
         $message = "Rating must be between 1 and 5.";
@@ -50,21 +49,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 comment,
                 targetType,
                 packageID,
-                agencyUserID,
-                sentiment
+                agencyUserID
             )
-            VALUES (?, ?, ?, 'package', ?, NULL, ?)
+            VALUES (?, ?, ?, 'package', ?, NULL)
         ");
 
         $stmt->execute([
             $travellerUserID,
             $rating,
             $comment,
-            $packageID,
-            $sentiment
+            $packageID
         ]);
 
-        $message = "Review submitted successfully. Sentiment detected: " . $sentiment;
+        $message = "Review submitted successfully.";
     }
 }
 ?>
