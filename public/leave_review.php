@@ -23,31 +23,14 @@ if (!$package) {
     die("Package not found.");
 }
 
-$sessionUserID = $_SESSION["userID"] ?? $_SESSION["user_id"] ?? null;
-
-$stmt = $pdo->prepare("
-    SELECT userID
-    FROM Traveller
-    WHERE userID = ?
-");
-$stmt->execute([$sessionUserID]);
+$stmt = $pdo->query("SELECT userID FROM Traveller LIMIT 1");
 $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$traveller) {
-    $stmt = $pdo->query("
-        SELECT userID
-        FROM Traveller
-        LIMIT 1
-    ");
-    $traveller = $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-if (!$traveller) {
-    die("No traveller profile exists in the database.");
+    die("No traveller profile exists.");
 }
 
 $travellerUserID = $traveller["userID"];
-
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -90,29 +73,157 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html>
 <head>
     <title>Leave Review - Tripistry</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            max-width: 750px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .review-card {
+            background: white;
+            padding: 35px;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 34px;
+            color: #222;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0,123,255,0.35);
+        }
+
+        .message {
+            background: #eaf7ea;
+            border-left: 5px solid #28a745;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        button,
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .btn {
+            background: #555;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+    </style>
 </head>
 
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<h1>Leave Review</h1>
+<div class="page-wrapper">
+    <div class="review-card">
 
-<h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+        <h1>Leave Review</h1>
 
-<?php if ($message): ?>
-    <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
-<?php endif; ?>
+        <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
 
-<form method="POST">
-    <label>Rating (1 - 5)</label><br>
-    <input type="number" name="rating" step="0.1" min="1" max="5" required><br><br>
+        <?php if ($message): ?>
+            <div class="message">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
 
-    <label>Comment</label><br>
-    <textarea name="comment" required></textarea><br><br>
+        <form method="POST">
 
-    <button type="submit">Submit Review</button>
-</form>
+            <label>Rating (1 - 5)</label>
+            <input
+                type="number"
+                name="rating"
+                step="0.1"
+                min="1"
+                max="5"
+                required
+            >
+
+            <label>Comment</label>
+            <textarea name="comment" required></textarea>
+
+            <div class="actions">
+                <button type="submit">Submit Review</button>
+                <a class="btn" href="package_details.php?id=<?php echo htmlspecialchars($packageID); ?>">
+                    Back
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
 
 </body>
 </html>

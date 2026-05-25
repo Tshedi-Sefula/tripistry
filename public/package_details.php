@@ -142,7 +142,25 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
                 <p><strong>Rating:</strong> <?php echo htmlspecialchars($review["rating"]); ?>/5</p>
 
                 <p><?php echo htmlspecialchars($review["comment"]); ?></p>
-               
+                <p>
+                    <strong>Sentiment:</strong>
+                    <?php echo htmlspecialchars($review["sentiment"]); ?>
+                    <a
+    href="delete_review.php?id=<?php echo htmlspecialchars($review["reviewID"]); ?>"
+    onclick="return confirm('Are you sure you want to delete this review?');"
+    style="
+        display:inline-block;
+        margin-top:10px;
+        padding:8px 12px;
+        background:#dc3545;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+    "
+>
+    Delete Review
+</a>
+                </p>
                 <p>
                     <small>
                         By <?php echo htmlspecialchars($review["travellerName"]); ?>
