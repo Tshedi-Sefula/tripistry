@@ -16,7 +16,7 @@ $packageID = $_GET["id"];
 $userID = $_SESSION["user_id"];
 
 $stmt = $pdo->prepare("
-    SELECT agencyID
+    SELECT userID
     FROM TravelAgency
     WHERE userID = ?
 ");
@@ -27,13 +27,13 @@ if (!$agency) {
     die("Agency profile not found.");
 }
 
-$agencyID = $agency["agencyID"];
+$agencyID = $agency["userID"];
 
 $stmt = $pdo->prepare("
     SELECT *
     FROM TravelPackage
     WHERE packageID = ?
-      AND agencyID = ?
+      AND agencyUserID = ?
 ");
 $stmt->execute([$packageID, $agencyID]);
 $package = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -53,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $endDate = $_POST["endDate"];
     $itinerary = trim($_POST["itinerary"]);
     $status = $_POST["status"];
-    $packageType = $_POST["packageType"];
 
     if ($title === "" || $basePrice <= 0 || $durationDays <= 0) {
         $message = "Please fill in all required fields correctly.";
@@ -68,10 +67,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 startDate = ?,
                 endDate = ?,
                 itinerary = ?,
-                status = ?,
-                packageType = ?
+                status = ?
             WHERE packageID = ?
-              AND agencyID = ?
+              AND agencyUserID = ?
         ");
 
         $stmt->execute([
@@ -83,18 +81,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $endDate,
             $itinerary,
             $status,
-            $packageType,
             $packageID,
             $agencyID
         ]);
 
         $message = "Package updated successfully.";
 
+        // Refresh package data
         $stmt = $pdo->prepare("
-            SELECT *
-            FROM TravelPackage
-            WHERE packageID = ?
-              AND agencyID = ?
+            SELECT * FROM TravelPackage 
+            WHERE packageID = ? AND agencyUserID = ?
         ");
         $stmt->execute([$packageID, $agencyID]);
         $package = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -194,12 +190,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <option value="active" <?php if ($package["status"] === "active") echo "selected"; ?>>Active</option>
             <option value="inactive" <?php if ($package["status"] === "inactive") echo "selected"; ?>>Inactive</option>
             <option value="draft" <?php if ($package["status"] === "draft") echo "selected"; ?>>Draft</option>
-        </select>
-
-        <label>Package Type</label>
-        <select name="packageType" required>
-            <option value="regular" <?php if ($package["packageType"] === "regular") echo "selected"; ?>>Regular</option>
-            <option value="group" <?php if ($package["packageType"] === "group") echo "selected"; ?>>Group</option>
         </select>
 
         <button type="submit">Update Package</button>
