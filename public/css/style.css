@@ -1693,3 +1693,27 @@ input, select, textarea, button,
     .detail-layout { grid-template-columns: 1fr; }
     .dashboard-grid { grid-template-columns: 1fr; }
 }
+
+/* --- FIX CUSTOM FONT CRAMPING (the important key word 
+overules the inline html --- */
+
+/* 1. Fix the main page titles (the custom font is too big by default) */
+h1, .page-title {
+    line-height: 1.3 !important;      /* Adds vertical breathing room */
+    letter-spacing: 3px !important;   /* Pushes the thick letters apart horizontally */
+    margin-bottom: 1.5rem !important; /* Pushes the subtitle away from the big text */
+}
+
+/* 2. Fix the Package Card Titles (lI noticed the cards are squished together) */
+.package-card h2, .glass-card h2 {
+    font-size: 1.4rem !important;     /* Shrinks the font slightly so it fits the box */
+    line-height: 1.4 !important;      /* Stops lines of text from stacking on each other */
+    letter-spacing: 1px !important;
+    margin-bottom: 1rem !important;   /* Pushes the description paragraph down */
+}
+
+/* 3. Fix the subtitles and standard text overlapping */
+.page-subtitle, .package-card p {
+    line-height: 1.5 !important;
+    margin-top: 0.5rem !important;
+}
