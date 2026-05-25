@@ -9,99 +9,40 @@ if (!isAgency()) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Agency Dashboard - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-
-        .container {
-            padding: 30px;
-        }
-
-        .card-container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: white;
-            width: 300px;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .card h2 {
-            margin-top: 0;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background: #0056b3;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Dashboard — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
-<body>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
+<div class="wrapper">
+    <div class="page-content">
+        <h1 class="page-title">Agency Dashboard</h1>
+        <p class="page-subtitle">MANAGE YOUR TRAVEL PACKAGES</p>
 
-    <h2>Welcome Agency</h2>
+        <div class="dashboard-grid">
 
-    <div class="card-container">
+            <div class="dashboard-card">
+                <span class="card-icon">📦</span>
+                <h2>Manage Packages</h2>
+                <p>View, edit and manage your travel packages.</p>
+                <a class="btn" href="agency_packages.php">View Packages</a>
+            </div>
 
-        <div class="card">
-
-            <h2>Manage Packages</h2>
-
-            <p>
-                View, edit and manage your travel packages.
-            </p>
-
-            <a class="btn" href="agency_packages.php">
-                View Packages
-            </a>
-
-        </div>
-
-        <div class="card">
-
-            <h2>Create Package</h2>
-
-            <p>
-                Create a new travel package for travellers.
-            </p>
-
-            <a class="btn" href="create_package.php">
-                Create Package
-            </a>
+            <div class="dashboard-card">
+                <span class="card-icon">✨</span>
+                <h2>Create Package</h2>
+                <p>Create a new travel package for travellers.</p>
+                <a class="btn" href="create_package.php">Create Package</a>
+            </div>
 
         </div>
-
     </div>
-
 </div>
 
 </body>

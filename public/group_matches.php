@@ -76,64 +76,50 @@ usort($matches, function ($a, $b) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Group Matches</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find a Group — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<h1>Group Trip Matches</h1>
+<div class="wrapper">
+    <div class="page-content">
+        <h1 class="page-title">Group Trip Matches</h1>
+        <p class="page-subtitle">RANKED BY COMPATIBILITY — GROUP SPACE, PRICE, DURATION &amp; YOUR PREFERENCES</p>
 
-<p>
-    Group trips are ranked using a simple compatibility score based on:
-    group space, price, duration, dates and traveller preferences.
-</p>
+        <?php if (count($matches) > 0): ?>
+            <div class="packages-grid">
+                <?php foreach ($matches as $trip): ?>
+                    <div class="package-card">
+                        <h2><?php echo htmlspecialchars($trip["title"]); ?></h2>
+                        <p><?php echo htmlspecialchars($trip["description"]); ?></p>
+                        <div class="price-tag">R<?php echo number_format($trip["basePrice"], 2); ?></div>
+                        <div class="package-meta">
+                            <span class="meta-badge">⏱ <?php echo htmlspecialchars($trip["durationDays"]); ?> days</span>
+                            <span class="meta-badge">👥 <?php echo htmlspecialchars($trip["currentGroupSize"]); ?>/<?php echo htmlspecialchars($trip["maxGroupSize"]); ?></span>
+                            <span class="meta-badge" style="color:var(--gold); border-color:rgba(255,200,0,0.35);">
+                                ★ <?php echo htmlspecialchars($trip["matchScore"]); ?>% match
+                            </span>
+                        </div>
+                        <a class="btn" href="package_details.php?id=<?php echo htmlspecialchars($trip["packageID"]); ?>">
+                            View Package
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="glass-card" style="text-align:center; padding:3rem;">
+                <p style="color:var(--text-dim); font-size:16px;">No group trips found.</p>
+            </div>
+        <?php endif; ?>
 
-<?php if (count($matches) > 0): ?>
-
-    <?php foreach ($matches as $trip): ?>
-
-        <div style="border:1px solid #ccc; padding:15px; margin:15px;">
-            <h2><?php echo htmlspecialchars($trip["title"]); ?></h2>
-
-            <p>
-                <strong>Match Score:</strong>
-                <?php echo htmlspecialchars($trip["matchScore"]); ?>%
-            </p>
-
-            <p><?php echo htmlspecialchars($trip["description"]); ?></p>
-
-            <p>
-                <strong>Price:</strong>
-                R<?php echo number_format($trip["basePrice"], 2); ?>
-            </p>
-
-            <p>
-                <strong>Duration:</strong>
-                <?php echo htmlspecialchars($trip["durationDays"]); ?> days
-            </p>
-
-            <p>
-                <strong>Group:</strong>
-                <?php echo htmlspecialchars($trip["currentGroupSize"]); ?>
-                /
-                <?php echo htmlspecialchars($trip["maxGroupSize"]); ?>
-            </p>
-
-            <a href="package_details.php?id=<?php echo htmlspecialchars($trip["packageID"]); ?>">
-                View Package
-            </a>
-        </div>
-
-    <?php endforeach; ?>
-
-<?php else: ?>
-
-    <p>No group trips found.</p>
-
-<?php endif; ?>
+    </div>
+</div>
 
 </body>
 </html>

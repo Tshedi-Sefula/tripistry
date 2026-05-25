@@ -69,54 +69,74 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Create Package - Tripistry</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 30px; }
-        .container { background: white; max-width: 750px; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 15px; }
-        textarea { height: 120px; }
-        button, .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; }
-        .back { background: #555; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Package — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
-    <h1>Create Travel Package</h1>
+<div class="wrapper">
+    <div class="page-content">
+        <a class="btn-back" href="agency_packages.php">Back to My Packages</a>
 
-    <?php if ($message): ?>
-        <p><strong><?= htmlspecialchars($message) ?></strong></p>
-    <?php endif; ?>
+        <h1 class="page-title">Create Package</h1>
+        <p class="page-subtitle">DESIGN A NEW TRAVEL EXPERIENCE</p>
 
-    <form method="POST">
-        <label>Title</label>
-        <input type="text" name="title" required>
+        <div class="glass-card" style="max-width:680px;">
 
-        <label>Description</label>
-        <textarea name="description" required></textarea>
+            <?php if ($message): ?>
+                <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
+            <?php endif; ?>
 
-        <label>Base Price</label>
-        <input type="number" name="basePrice" step="0.01" min="1" required>
+            <form method="POST" class="book-form">
 
-        <label>Duration Days</label>
-        <input type="number" name="durationDays" min="1" required>
+                <div class="form-group">
+                    <label>Title <span style="color:var(--danger);">*</span></label>
+                    <input type="text" name="title" required placeholder="e.g. Zanzibar Escape">
+                </div>
 
-        <label>Start Date</label>
-        <input type="date" name="startDate" required>
+                <div class="form-group">
+                    <label>Base Price (R) <span style="color:var(--danger);">*</span></label>
+                    <input type="number" name="basePrice" step="0.01" min="1" required placeholder="e.g. 12500">
+                </div>
 
-        <label>End Date</label>
-        <input type="date" name="endDate" required>
+                <div class="form-group">
+                    <label>Duration (days) <span style="color:var(--danger);">*</span></label>
+                    <input type="number" name="durationDays" min="1" required placeholder="e.g. 7">
+                </div>
 
-        <label>Itinerary</label>
-        <textarea name="itinerary" required></textarea>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" required>
+                </div>
 
-        <button type="submit">Create Package</button>
-        <a class="btn back" href="agency_packages.php">Back</a>
-    </form>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="endDate" required>
+                </div>
+
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Description</label>
+                    <textarea name="description" required placeholder="A brief overview of what this package offers…"></textarea>
+                </div>
+
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Itinerary</label>
+                    <textarea name="itinerary" required placeholder="Day 1: Arrival&#10;Day 2: City tour…"></textarea>
+                </div>
+
+                <button type="submit" class="btn-search">Create Package</button>
+                <a class="btn-secondary" href="agency_packages.php" style="display:inline-flex; align-items:center;">Back</a>
+
+            </form>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>

@@ -70,158 +70,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Leave Review - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        .page-wrapper {
-            max-width: 750px;
-            margin: 45px auto;
-            padding: 0 20px;
-        }
-
-        .review-card {
-            background: white;
-            padding: 35px;
-            border-radius: 14px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 34px;
-            color: #222;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 24px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 7px;
-            color: #333;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 15px;
-        }
-
-        textarea {
-            min-height: 130px;
-            resize: vertical;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 4px rgba(0,123,255,0.35);
-        }
-
-        .message {
-            background: #eaf7ea;
-            border-left: 5px solid #28a745;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        button,
-        .btn {
-            padding: 12px 18px;
-            border: none;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        button {
-            background: #007bff;
-            color: white;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        .btn {
-            background: #555;
-            color: white;
-        }
-
-        .btn:hover {
-            background: #333;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Review — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="page-wrapper">
-    <div class="review-card">
+<div class="wrapper">
+    <div class="page-content">
+        <a class="btn-back" href="package_details.php?id=<?php echo htmlspecialchars($packageID); ?>">Back to Package</a>
 
-        <h1>Leave Review</h1>
+        <h1 class="page-title">Leave a Review</h1>
+        <p class="page-subtitle"><?php echo htmlspecialchars($package["title"]); ?></p>
 
-        <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+        <div class="glass-card" style="max-width:520px;">
 
-        <?php if ($message): ?>
-            <div class="message">
-                <?php echo htmlspecialchars($message); ?>
-            </div>
-        <?php endif; ?>
+            <?php if ($message): ?>
+                <div class="alert alert-<?php echo $msgType; ?>"><?php echo htmlspecialchars($message); ?></div>
+            <?php endif; ?>
 
-        <form method="POST">
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label>Rating (1 – 5)</label>
+                    <input type="number" name="rating" step="0.1" min="1" max="5" required placeholder="e.g. 4.5">
+                </div>
+                <div class="form-group">
+                    <label>Comment</label>
+                    <textarea name="comment" required placeholder="Share your experience…"></textarea>
+                </div>
+                <button type="submit" class="btn-search">Submit Review</button>
+            </form>
 
-            <label>Rating (1 - 5)</label>
-            <input
-                type="number"
-                name="rating"
-                step="0.1"
-                min="1"
-                max="5"
-                required
-            >
-
-            <label>Comment</label>
-            <textarea name="comment" required></textarea>
-
-            <div class="actions">
-                <button type="submit">Submit Review</button>
-                <a class="btn" href="package_details.php?id=<?php echo htmlspecialchars($packageID); ?>">
-                    Back
-                </a>
-            </div>
-
-        </form>
-
+        </div>
     </div>
 </div>
 

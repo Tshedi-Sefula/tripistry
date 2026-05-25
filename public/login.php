@@ -83,136 +83,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Login - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            background: white;
-            width: 400px;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-        }
-
-        h1 {
-            margin-top: 0;
-            color: #007bff;
-            text-align: center;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #555;
-            margin-bottom: 25px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 11px;
-            margin-top: 6px;
-            margin-bottom: 18px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        .error {
-            background: #ffe1e1;
-            color: #b00020;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .register-link a {
-            color: #007bff;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<div class="login-wrapper">
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="../img/StevenUniverseBarn.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
 
-    <div class="login-card">
-
-        <h1>Tripistry</h1>
-
-        <p class="subtitle">
-            Login to your travel account
-        </p>
+<div class="wrapper auth-center">
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p>Login to your Tripistry account</p>
 
         <?php if ($error): ?>
-            <div class="error">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
+            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST">
-
-            <label>Email</label>
-            <input type="email" name="email" required>
-
-            <label>Password</label>
-            <input type="password" name="password" required>
-
-            <button type="submit">Login</button>
-
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-search">Login</button>
         </form>
 
-        <div class="register-link">
-            Don’t have an account?
-            <a href="register.php">Create one</a>
-        </div>
-
+        <p style="margin-top:1.2rem; text-align:center; font-size:14px; color:var(--text-dim);">
+            No account? <a href="register.php" style="color:var(--gold); text-decoration:none;">Create one</a>
+        </p>
     </div>
-
 </div>
 
 </body>

@@ -94,84 +94,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Book Package - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-        }
-
-        .container {
-            background: white;
-            max-width: 700px;
-            margin: auto;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        input {
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        button {
-            padding: 10px 15px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 5px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Package — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
+<div class="wrapper">
+    <div class="page-content">
+        <a class="btn-back" href="package_details.php?id=<?php echo $packageID; ?>">Back to Package</a>
 
-    <h1>Book Package</h1>
+        <h1 class="page-title">Book Package</h1>
+        <p class="page-subtitle">CONFIRM YOUR TRAVEL BOOKING</p>
 
-    <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+        <div class="glass-card" style="max-width:540px;">
+            <div class="view-manufacturer">Package</div>
+            <div class="view-model" style="font-size:1.6rem; margin-bottom:.4rem;">
+                <?php echo htmlspecialchars($package["title"]); ?>
+            </div>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:.4rem;">
+                <strong>Duration:</strong> <?php echo htmlspecialchars($package["durationDays"]); ?> days
+            </p>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:1.2rem;">
+                Price per traveller: <strong style="color:var(--gold);">R<?php echo number_format($package["basePrice"], 2); ?></strong>
+            </p>
 
-    <p>
-        Price per traveller:
-        <strong>R<?php echo number_format($package["basePrice"], 2); ?></strong>
-    </p>
+            <?php if ($message): ?>
+                <div class="<?php echo $success ? 'confirm-msg' : 'alert alert-error'; ?>">
+                    <?php echo htmlspecialchars($message); ?>
+                </div>
+            <?php endif; ?>
 
-    <p>
-        Duration:
-        <?php echo htmlspecialchars($package["durationDays"]); ?> days
-    </p>
-
-    <?php if ($message): ?>
-        <p><strong><?php echo htmlspecialchars($message); ?></strong></p>
-    <?php endif; ?>
-
-    <form method="POST">
-
-        <label>Number of Travellers</label><br>
-
-        <input
-            type="number"
-            name="numTravellers"
-            min="1"
-            required
-        >
-
-        <button type="submit">
-            Confirm Booking
-        </button>
-
-    </form>
-
+            <?php if (!$success): ?>
+                <form method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="numTravellers">Number of Travellers</label>
+                        <input type="number" id="numTravellers" name="numTravellers" min="1" required>
+                    </div>
+                    <button type="submit" class="btn-search">Confirm Booking</button>
+                </form>
+            <?php else: ?>
+                <div class="btn-row">
+                    <a class="btn" href="my_bookings.php">View My Bookings</a>
+                    <a class="btn-secondary" href="packages.php">Browse More</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
 </body>

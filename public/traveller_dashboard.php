@@ -9,96 +9,54 @@ if (!isTraveller()) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Traveller Dashboard - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-       
-
-        .container {
-            padding: 30px;
-        }
-
-        .card-container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: white;
-            width: 280px;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .card h2 {
-            margin-top: 0;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background: #0056b3;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
-<body>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<div class="container">
+<div class="wrapper">
+    <div class="page-content">
+        <h1 class="page-title">Welcome to Tripistry</h1>
+        <p class="page-subtitle">YOUR TRAVELLER DASHBOARD</p>
 
-    <h2>Welcome to Tripistry</h2>
+        <div class="dashboard-grid">
 
-    <div class="card-container">
+            <div class="dashboard-card">
+                <span class="card-icon">🌍</span>
+                <h2>Browse Packages</h2>
+                <p>Explore available travel packages from different agencies.</p>
+                <a class="btn" href="packages.php">View Packages</a>
+            </div>
 
-        <div class="card">
-            <h2>Browse Packages</h2>
+            <div class="dashboard-card">
+                <span class="card-icon">🎫</span>
+                <h2>My Bookings</h2>
+                <p>View your bookings and payment status.</p>
+                <a class="btn" href="my_bookings.php">View Bookings</a>
+            </div>
 
-            <p>
-                Explore available travel packages from different agencies.
-            </p>
+            <div class="dashboard-card">
+                <span class="card-icon">✨</span>
+                <h2>Recommended</h2>
+                <p>Packages picked for you based on affordability and availability.</p>
+                <a class="btn" href="recommendations.php">View Picks</a>
+            </div>
 
-            <a class="btn" href="packages.php">
-                View Packages
-            </a>
+            <div class="dashboard-card">
+                <span class="card-icon">👥</span>
+                <h2>Find a Group</h2>
+                <p>Discover group trips that match your travel preferences.</p>
+                <a class="btn" href="group_matches.php">Find Groups</a>
+            </div>
+
         </div>
-
-        <div class="card">
-            <h2>My Bookings</h2>
-
-            <p>
-                View your bookings and payment status.
-            </p>
-
-            <a class="btn" href="my_bookings.php">
-                View Bookings
-            </a>
-        </div>
-
     </div>
-
 </div>
 
 </body>

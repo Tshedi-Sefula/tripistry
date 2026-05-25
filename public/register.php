@@ -58,107 +58,114 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Register - Tripistry</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 30px; }
-        .container { background: white; max-width: 750px; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 15px; }
-        textarea { height: 100px; }
-        button, .btn { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .section { display: none; }
-    </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
     <script>
         function toggleRoleFields() {
             var role = document.getElementById("role").value;
-            
-            // Toggle sections
+
             document.getElementById("travellerFields").style.display = (role === "traveller") ? "block" : "none";
-            document.getElementById("agencyFields").style.display = (role === "agency") ? "block" : "none";
+            document.getElementById("agencyFields").style.display    = (role === "agency")    ? "block" : "none";
 
-            // Toggle required attributes dynamically
-            toggleRequiredFields(role);
-        }
-
-        function toggleRequiredFields(role) {
-            // Traveller fields
             const travellerInputs = document.querySelectorAll('#travellerFields input, #travellerFields textarea');
-            travellerInputs.forEach(input => {
-                input.required = (role === "traveller");
-            });
+            travellerInputs.forEach(input => { input.required = (role === "traveller"); });
 
-            // Agency fields
             const agencyInputs = document.querySelectorAll('#agencyFields input, #agencyFields textarea');
-            agencyInputs.forEach(input => {
-                input.required = (role === "agency");
-            });
+            agencyInputs.forEach(input => { input.required = (role === "agency"); });
         }
     </script>
 </head>
-
 <body onload="toggleRoleFields()">
 
-<div class="container">
-    <h1>Register</h1>
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="../img/StevenUniverseBarn.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
 
-    <?php if ($message): ?>
-        <p><strong><?= htmlspecialchars($message) ?></strong></p>
-    <?php endif; ?>
+<div class="wrapper auth-center">
+    <div class="auth-card" style="max-width:520px;">
+        <h2>Create Account</h2>
+        <p>Join the Tripistry adventure!</p>
 
-    <form method="POST" id="registerForm">
-        <label>Email</label>
-        <input type="email" name="email" required>
+        <?php if ($message): ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars($message); ?></div>
+        <?php endif; ?>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+        <form method="POST" id="registerForm" class="auth-form">
 
-        <label>Role</label>
-        <select name="role" id="role" onchange="toggleRoleFields()" required>
-            <option value="traveller">Traveller</option>
-            <option value="agency">Travel Agency</option>
-        </select>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="your@email.com">
+            </div>
 
-        <!-- Traveller Fields -->
-        <div id="travellerFields" class="section">
-            <h2>Traveller Details</h2>
-            <label>First Name</label>
-            <input type="text" name="firstName">
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Min 8 characters">
+            </div>
 
-            <label>Last Name</label>
-            <input type="text" name="lastName">
+            <div class="form-group">
+                <label>I am a…</label>
+                <select name="role" id="role" onchange="toggleRoleFields()" required>
+                    <option value="traveller">Traveller</option>
+                    <option value="agency">Travel Agency</option>
+                </select>
+            </div>
 
-            <label>Passport Number (Optional)</label>
-            <input type="text" name="passportNum">
+            <!-- Traveller Fields -->
+            <div id="travellerFields">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" placeholder="e.g. Finn">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" placeholder="e.g. The Human">
+                </div>
+                <div class="form-group">
+                    <label>Passport Number</label>
+                    <input type="text" name="passportNum" placeholder="e.g. A1234567">
+                </div>
+                <div class="form-group">
+                    <label>Nationality</label>
+                    <input type="text" name="nationality" placeholder="e.g. South African">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dateOfBirth">
+                </div>
+            </div>
 
-            <label>Nationality</label>
-            <input type="text" name="nationality">
+            <!-- Agency Fields -->
+            <div id="agencyFields" style="display:none;">
+                <div class="form-group">
+                    <label>Agency Name</label>
+                    <input type="text" name="agencyName" placeholder="e.g. Ooo Travel Co.">
+                </div>
+                <div class="form-group">
+                    <label>Website</label>
+                    <input type="text" name="website" placeholder="https://yoursite.com">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address" placeholder="123 Candy Kingdom">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="agencyDescription" placeholder="Tell travellers about your agency…"></textarea>
+                </div>
+            </div>
 
-            <label>Date of Birth</label>
-            <input type="date" name="dateOfBirth">
-        </div>
+            <button type="submit" class="btn-search">Register</button>
+        </form>
 
-        <!-- Agency Fields -->
-        <div id="agencyFields" class="section">
-            <h2>Agency Details</h2>
-            <label>Agency Name</label>
-            <input type="text" name="agencyName">
-
-            <label>Website</label>
-            <input type="text" name="website">
-
-            <label>Address</label>
-            <input type="text" name="address">
-
-            <label>Description</label>
-            <textarea name="agencyDescription"></textarea>
-        </div>
-
-        <button type="submit">Register</button>
-        <a class="btn" href="login.php" style="background:#555; margin-left:10px;">Back to Login</a>
-    </form>
+        <p style="margin-top:1rem; text-align:center; font-size:14px; color:var(--text-dim);">
+            Already have an account? <a href="login.php" style="color:var(--gold); text-decoration:none;">Login</a>
+        </p>
+    </div>
 </div>
 
 </body>

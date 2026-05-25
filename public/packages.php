@@ -36,124 +36,58 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en-ZA">
 <head>
-    <title>Travel Packages - Tripistry</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-
-        .filters {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .package-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: green;
-        }
-
-        .view-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        select, button {
-            padding: 8px;
-            margin-right: 10px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Packages — Tripistry</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
 <?php include "../includes/navbar.php"; ?>
 
-<h1>Available Travel Packages</h1>
+<div class="wrapper">
+    <div class="page-content">
+        <h1 class="page-title">Available Packages</h1>
+        <p class="page-subtitle">EXPLORE ADVENTURES FROM OUR PARTNER AGENCIES</p>
 
-<div class="filters">
-    <form method="GET">
-        <label>Sort by:</label>
-
-        <select name="sort">
-            <option value="price_asc" <?php if ($sort === "price_asc") echo "selected"; ?>>
-                Price: Low to High
-            </option>
-
-            <option value="price_desc" <?php if ($sort === "price_desc") echo "selected"; ?>>
-                Price: High to Low
-            </option>
-
-            <option value="duration_asc" <?php if ($sort === "duration_asc") echo "selected"; ?>>
-                Duration: Short to Long
-            </option>
-
-            <option value="duration_desc" <?php if ($sort === "duration_desc") echo "selected"; ?>>
-                Duration: Long to Short
-            </option>
-        </select>
-
-        <button type="submit">Apply</button>
-    </form>
-</div>
-
-<?php if (count($packages) > 0): ?>
-
-    <?php foreach ($packages as $package): ?>
-
-        <div class="package-card">
-
-            <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
-
-            <p><?php echo htmlspecialchars($package["description"]); ?></p>
-
-            <p class="price">
-                Price: R<?php echo number_format($package["basePrice"], 2); ?>
-            </p>
-
-            <p>
-                Duration: <?php echo htmlspecialchars($package["durationDays"]); ?> days
-            </p>
-
-            <p>
-                Status: <?php echo htmlspecialchars(ucfirst($package["status"])); ?>
-            </p>
-
-            <a class="view-btn"
-               href="package_details.php?id=<?php echo htmlspecialchars($package["packageID"]); ?>">
-                View Details
-            </a>
-
+        <div class="packages-toolbar">
+            <form method="GET" style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap; width:100%;">
+                <label>Sort by</label>
+                <select name="sort">
+                    <option value="price_asc"     <?php if ($sort==="price_asc")     echo "selected"; ?>>Price: Low → High</option>
+                    <option value="price_desc"    <?php if ($sort==="price_desc")    echo "selected"; ?>>Price: High → Low</option>
+                    <option value="duration_asc"  <?php if ($sort==="duration_asc")  echo "selected"; ?>>Duration: Short → Long</option>
+                    <option value="duration_desc" <?php if ($sort==="duration_desc") echo "selected"; ?>>Duration: Long → Short</option>
+                </select>
+                <button type="submit" class="btn">Apply</button>
+            </form>
         </div>
 
-    <?php endforeach; ?>
+        <?php if (count($packages) > 0): ?>
+            <div class="packages-grid">
+                <?php foreach ($packages as $package): ?>
+                    <div class="package-card">
+                        <h2><?php echo htmlspecialchars($package["title"]); ?></h2>
+                        <p><?php echo htmlspecialchars($package["description"]); ?></p>
+                        <div class="price-tag">R<?php echo number_format($package["basePrice"], 2); ?></div>
+                        <div class="package-meta">
+                            <span class="meta-badge">⏱ <?php echo htmlspecialchars($package["durationDays"]); ?> days</span>
+                            <span class="badge badge-<?php echo $package['status']; ?>"><?php echo ucfirst($package["status"]); ?></span>
+                        </div>
+                        <a class="btn" href="package_details.php?id=<?php echo htmlspecialchars($package["packageID"]); ?>">View Details</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="glass-card" style="text-align:center; padding:3rem;">
+                <p style="color:var(--text-dim); font-size:16px;">No travel packages found.</p>
+            </div>
+        <?php endif; ?>
 
-<?php else: ?>
-
-    <p>No travel packages found.</p>
-
-<?php endif; ?>
+    </div>
+</div>
 
 </body>
 </html>
