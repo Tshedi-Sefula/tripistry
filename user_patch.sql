@@ -1,0 +1,2 @@
+update user set passwordHash = '$2y$10$dQ0u4PT5ZlOWEUa9OIUoBeHJn8ezjqjF0UVE4Gu.SQa8PosGUr.ea' where email = 'info@sunway.com';
+update user set passwordHash = '$2y$10$dQ0u4PT5ZlOWEUa9OIUoBeHJn8ezjqjF0UVE4Gu.SQa8PosGUr.ea' where email = 'liam.johnson@email.com';
